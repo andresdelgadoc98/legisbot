@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import MessageContainer from "../components/MessageContainer";
 import Message from "../components/Message";
 import DocumentApi from "../../Services/Controllers/Documents";
-const socket = io("http://localhost:5002");
+const socket = io("http://34.60.14.225:5002");
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
