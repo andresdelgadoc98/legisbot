@@ -129,7 +129,7 @@ const Chat = () => {
           display: "flex",
           flexDirection: "column",
           height: "90vh",
-          maxWidth: "75%",
+          maxWidth: "100%",
           margin: "0 auto",
           padding: "16px",
           backgroundColor: "#292a2d",
