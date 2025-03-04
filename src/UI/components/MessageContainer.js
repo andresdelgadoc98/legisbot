@@ -14,6 +14,7 @@ export default function MessageContainer({ messages }) {
       sx={{
         flexGrow: 1,
         overflowY: "auto",
+        padding: "16px",
         marginBottom: "16px",
         backgroundColor: "#292a2d",
         color: "white",

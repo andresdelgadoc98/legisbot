@@ -71,7 +71,6 @@ const Login = () => {
             }
           />
 
-          {/* Campo de contraseña */}
           <TextField
             margin="normal"
             required
@@ -91,7 +90,6 @@ const Login = () => {
             }
           />
 
-          {/* Botón de inicio de sesión */}
           <Button
             type="submit"
             fullWidth
@@ -101,7 +99,6 @@ const Login = () => {
             Iniciar Sesión
           </Button>
 
-          {/* Enlace para registrarse */}
           <Typography variant="body2" align="center">
             ¿No tienes una cuenta?{" "}
             <Link href="#" underline="hover">

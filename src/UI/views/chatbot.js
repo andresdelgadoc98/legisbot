@@ -6,6 +6,9 @@ import {
   MenuItem,
   FormControl,
   IconButton,
+  Button,
+  Modal,
+  TextField,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import io from "socket.io-client";
@@ -15,7 +18,6 @@ import DocumentApi from "../../Services/Controllers/Documents";
 import SideBar from "../components/SideBar";
 import ChatAPI from "../../Services/Controllers/Chats";
 import config from "../../config/config";
-
 const socket = io(config.BACKEND_URL);
 
 const Chat = () => {
@@ -25,6 +27,9 @@ const Chat = () => {
   const [documentsList, setdocumentsList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [savedChats, setSavedChats] = useState([]);
+  const [isContextModalOpen, setIsContextModalOpen] = useState(false);
+  const [context, setContext] = useState("");
 
   useEffect(() => {
     const handleResponse = (data) => {
@@ -51,7 +56,8 @@ const Chat = () => {
   useEffect(() => {
     async function fetchData() {
       const response = await DocumentApi.getDocuments();
-      console.log(response.data);
+      const response2 = await ChatAPI.getChats(1);
+      setSavedChats(response2.data);
       setdocumentsList(response.data);
       setSelectedValue(response.data[0].folder);
     }
@@ -66,6 +72,8 @@ const Chat = () => {
           1,
           currentMessage.substring(0, 45)
         );
+        const response2 = await ChatAPI.getChats(1);
+        setSavedChats(response2.data);
         socket.emit(
           "message",
           JSON.stringify({
@@ -113,12 +121,57 @@ const Chat = () => {
     setMessages(response.data.contenido);
   };
 
+  const handleOpenContextModal = async () => {
+    try {
+      const response = await ChatAPI.getContext(selectedChatId);
+      setContext(response.data.contexto);
+    } catch (error) {
+      console.error("Error al cargar el contexto:", error);
+    }
+    setIsContextModalOpen(true);
+  };
+
+  const handleCloseContextModal = () => {
+    setIsContextModalOpen(false);
+  };
+
+  const handleSendContext = async () => {
+    if (context.trim()) {
+      if (messages.length === 0) {
+        const result = await ChatAPI.createChat(1, context.substring(0, 45));
+        const response2 = await ChatAPI.getChats(1);
+        setSavedChats(response2.data);
+
+        await ChatAPI.updateContexto(result.data.chat_id, context);
+        socket.emit(
+          "message",
+          JSON.stringify({
+            text: context,
+            folder: selectedValue,
+            chat_id: result.data.chat_id,
+            usuario_id: 1,
+          })
+        );
+
+        setIsContextModalOpen(false);
+        setContext("");
+        setSelectedChatId(result.data.chat_id);
+        setMessages((prev) => [...prev, { text: context, sender: "user" }]);
+        setCurrentMessage("");
+      } else {
+        ChatAPI.updateContexto(selectedChatId, context);
+        setIsContextModalOpen(false);
+        setContext("");
+      }
+    }
+  };
+
   return (
     <div>
       <IconButton
         color="inherit"
         aria-label="menu"
-        onClick={toggleDrawer(true)} // Correcto
+        onClick={toggleDrawer(true)}
         sx={{ color: "white" }}
       >
         <MenuIcon />
@@ -131,14 +184,14 @@ const Chat = () => {
           height: "90vh",
           maxWidth: "100%",
           margin: "0 auto",
-
+          padding: "16px",
           backgroundColor: "#292a2d",
           fontFamily: "'Roboto', sans-serif",
         }}
       >
         <Box display="flex" alignItems="center" justifyContent="center">
           <Typography variant="h5" align="center" color="white" gutterBottom>
-            Chat con LegisBot
+            Selecciona el Documento:
           </Typography>
           <FormControl variant="outlined" style={{ marginLeft: "16px" }}>
             <Select
@@ -159,9 +212,6 @@ const Chat = () => {
                 },
               }}
             >
-              <MenuItem value="" disabled>
-                Selecciona el Documento
-              </MenuItem>
               {documentsList.map((item, index) => (
                 <MenuItem key={index} value={item.folder}>
                   {item.name}
@@ -169,8 +219,43 @@ const Chat = () => {
               ))}
             </Select>
           </FormControl>
+          <FormControl variant="outlined" style={{ marginLeft: "16px" }}>
+            <Button
+              variant="contained"
+              onClick={handleOpenContextModal}
+              sx={{
+                backgroundColor: "#3f51b5",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#303f9f",
+                },
+              }}
+            >
+              Contexto
+            </Button>
+          </FormControl>
         </Box>
-
+        {messages.length === 0 ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="h5" color="white" gutterBottom>
+              Hola! soy LegisBot
+            </Typography>
+            <Typography variant="body1" color="white">
+              ¿En que te puedo ayudar hoy?
+            </Typography>
+          </Box>
+        ) : (
+          <></>
+        )}
         <MessageContainer messages={messages} />
         <Message
           currentMessage={currentMessage}
@@ -183,7 +268,44 @@ const Chat = () => {
         isDrawerOpen={isDrawerOpen}
         toggleDrawer={toggleDrawer}
         handleChatSelection={handleChatSelection}
+        savedChats={savedChats}
+        setSavedChats={setSavedChats}
+        setMessages={setMessages}
       />
+
+      <Modal
+        open={isContextModalOpen}
+        onClose={() => setIsContextModalOpen(false)}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "400px",
+            backgroundColor: "white",
+            padding: "16px",
+            borderRadius: "8px",
+          }}
+        >
+          <TextField
+            multiline
+            rows={4}
+            placeholder="Proporciona un contexto o caso específico..."
+            value={context}
+            onChange={(e) => setContext(e.target.value)}
+            sx={{ width: "100%", marginBottom: "8px" }}
+          />
+          <Button
+            variant="contained"
+            onClick={handleSendContext}
+            sx={{ width: "100%" }}
+          >
+            Guardar contexto
+          </Button>
+        </Box>
+      </Modal>
     </div>
   );
 };

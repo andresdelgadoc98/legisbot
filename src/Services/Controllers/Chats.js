@@ -52,9 +52,35 @@ const deleteChat = async (id_chat) => {
   );
 };
 
+const updateContexto = async (id_chat, contexto) => {
+  return await resolve(
+    axios.put(
+      `${config.BACKEND_URL}/${name}/${id_chat}/contexto`,
+      { contexto },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  );
+};
+
+const getContext = async (id_chat) => {
+  return await resolve(
+    axios.get(`${config.BACKEND_URL}/${name}/${id_chat}/contexto`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  );
+};
+
 chats.getChats = getChats;
 chats.createChat = createChat;
 chats.getMessages = getMessages;
 chats.deleteChat = deleteChat;
+chats.updateContexto = updateContexto;
+chats.getContext = getContext;
 
 export default chats;
