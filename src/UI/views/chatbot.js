@@ -131,7 +131,7 @@ const Chat = () => {
           height: "90vh",
           maxWidth: "100%",
           margin: "0 auto",
-          padding: "16px",
+
           backgroundColor: "#292a2d",
           fontFamily: "'Roboto', sans-serif",
         }}
