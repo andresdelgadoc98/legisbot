@@ -42,8 +42,19 @@ const getMessages = async (id_user, id_chat) => {
   );
 };
 
+const deleteChat = async (id_chat) => {
+  return await resolve(
+    axios.delete(`${config.BACKEND_URL}/${name}/${id_chat}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  );
+};
+
 chats.getChats = getChats;
 chats.createChat = createChat;
 chats.getMessages = getMessages;
+chats.deleteChat = deleteChat;
 
 export default chats;

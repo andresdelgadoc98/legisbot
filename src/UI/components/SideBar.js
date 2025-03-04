@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
+import { Box, Typography, Drawer, List } from "@mui/material";
 import ChatsAPI from "../../Services/Controllers/Chats";
+import ChatList from "./chatList";
 
 export default function SideBar({
   isDrawerOpen,
@@ -26,6 +20,31 @@ export default function SideBar({
     fetchData();
   }, []);
 
+  // Función para manejar el renombrado de un chat
+  const handleRename = (chatId) => {
+    const newTitle = prompt("Enter new title:"); // Puedes usar un modal más bonito aquí
+    if (newTitle) {
+      setSavedChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat.id === chatId ? { ...chat, titulo: newTitle } : chat
+        )
+      );
+    }
+  };
+
+  const handleDelete = (chatId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this chat?"
+    );
+    if (confirmDelete) {
+      setSavedChats((prevChats) =>
+        prevChats.filter((chat) => chat.id !== chatId)
+      );
+
+      const response = ChatsAPI.deleteChat(chatId);
+    }
+  };
+
   return (
     <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
       <Box
@@ -43,15 +62,12 @@ export default function SideBar({
           Chats Guardados
         </Typography>
         <List>
-          {savedChats.map((chat) => (
-            <ListItem
-              button
-              key={chat.id}
-              onClick={() => handleChatSelection(chat.id)}
-            >
-              <ListItemText primary={chat.titulo} />
-            </ListItem>
-          ))}
+          <ChatList
+            savedChats={savedChats}
+            handleChatSelection={handleChatSelection}
+            handleRename={handleRename}
+            handleDelete={handleDelete}
+          />
         </List>
       </Box>
     </Drawer>
