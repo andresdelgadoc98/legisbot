@@ -14,8 +14,9 @@ import Message from "../components/Message";
 import DocumentApi from "../../Services/Controllers/Documents";
 import SideBar from "../components/SideBar";
 import ChatAPI from "../../Services/Controllers/Chats";
+import config from "../../config/config";
 
-const socket = io("http://localhost:5002");
+const socket = io(config.BACKEND_URL);
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
