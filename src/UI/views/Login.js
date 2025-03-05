@@ -6,18 +6,17 @@ import {
   Button,
   Container,
   Paper,
-  Link,
 } from "@mui/material";
+import Users from "../../Services/Controllers/Users";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validación básica
     if (!email.includes("@")) {
       setEmailError(true);
     } else {
@@ -29,11 +28,9 @@ const Login = () => {
     } else {
       setPasswordError(false);
     }
-
-    // Si no hay errores, proceder con el inicio de sesión
     if (email.includes("@") && password.length >= 6) {
       console.log("Iniciando sesión con:", { email, password });
-      // Aquí puedes agregar la lógica para enviar los datos al servidor
+      const res = await Users.login(email, password);
     }
   };
 
@@ -53,7 +50,6 @@ const Login = () => {
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          {/* Campo de correo electrónico */}
           <TextField
             margin="normal"
             required
@@ -89,7 +85,6 @@ const Login = () => {
                 : ""
             }
           />
-
           <Button
             type="submit"
             fullWidth
@@ -98,13 +93,6 @@ const Login = () => {
           >
             Iniciar Sesión
           </Button>
-
-          <Typography variant="body2" align="center">
-            ¿No tienes una cuenta?{" "}
-            <Link href="#" underline="hover">
-              Regístrate
-            </Link>
-          </Typography>
         </Box>
       </Paper>
     </Container>
