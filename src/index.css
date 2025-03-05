@@ -2,14 +2,5 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background-color: #292a2d;
   }
 
-.MuiFilledInput-root.Mui-focused {
-outline: none !important;
-box-shadow: none !important;
-}
-
-.reactMarkDown{
-  color:white
-}

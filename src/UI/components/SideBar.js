@@ -49,27 +49,14 @@ export default function SideBar({
       <Box
         sx={{
           width: 250,
-          backgroundColor: "#1e1e1e",
           height: "100%",
-          color: "white",
         }}
         role="presentation"
         onClick={toggleDrawer(false)}
         onKeyDown={toggleDrawer(false)}
       >
         <Box sx={{ padding: "16px" }}>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleNewChat} // Función para manejar la creación de un nuevo chat
-            sx={{
-              backgroundColor: "#3f51b5",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#303f9f",
-              },
-            }}
-          >
+          <Button variant="contained" fullWidth onClick={handleNewChat}>
             Nuevo Chat
           </Button>
         </Box>

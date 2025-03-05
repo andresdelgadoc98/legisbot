@@ -9,12 +9,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-const ChatList = ({
-  savedChats,
-  handleChatSelection,
-  handleRename,
-  handleDelete,
-}) => {
+const ChatList = ({ savedChats, handleChatSelection, handleDelete }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedChatId, setSelectedChatId] = useState(null);
 
@@ -40,11 +35,11 @@ const ChatList = ({
           button
           key={chat.id}
           onClick={() => handleChatSelection(chat.id)}
-          sx={{
+          /*   sx={{
             "&:hover": {
               backgroundColor: "rgba(255, 255, 255, 0.1)",
             },
-          }}
+          }} */
         >
           <ListItemText primary={truncateText(chat.titulo, 20)} />
           <ListItemSecondaryAction>
@@ -52,7 +47,6 @@ const ChatList = ({
               edge="end"
               aria-label="more"
               onClick={(e) => handleMenuOpen(e, chat.id)}
-              sx={{ color: "white" }} // Color de los tres puntos
             >
               <MoreVertIcon />
             </IconButton>
@@ -65,14 +59,6 @@ const ChatList = ({
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem
-          onClick={() => {
-            handleRename(selectedChatId);
-            handleMenuClose();
-          }}
-        >
-          Rename
-        </MenuItem>
         <MenuItem
           onClick={() => {
             handleDelete(selectedChatId);

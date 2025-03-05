@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { Box, Paper, List, ListItem } from "@mui/material";
+import { Box, List, ListItem } from "@mui/material";
 
 export default function MessageContainer({ messages }) {
   const messagesEndRef = useRef(null);
@@ -10,14 +10,12 @@ export default function MessageContainer({ messages }) {
   }, [messages]);
 
   return (
-    <Paper
+    <Box
       sx={{
         flexGrow: 1,
         overflowY: "auto",
         padding: "16px",
         marginBottom: "16px",
-        backgroundColor: "#292a2d",
-        color: "white",
         maxHeight: "70vh",
       }}
     >
@@ -32,12 +30,10 @@ export default function MessageContainer({ messages }) {
           >
             <Box
               sx={{
-                backgroundColor:
-                  message.sender === "user" ? "#414158" : "#292a2d",
+                backgroundColor: message.sender === "user" ? "#424242" : "",
                 padding: "10px",
                 borderRadius: "8px",
                 maxWidth: "70%",
-                color: "white",
               }}
             >
               <ReactMarkdown>{message.text}</ReactMarkdown>
@@ -46,6 +42,6 @@ export default function MessageContainer({ messages }) {
         ))}
       </List>
       <div ref={messagesEndRef} />
-    </Paper>
+    </Box>
   );
 }

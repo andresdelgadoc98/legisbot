@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
+import config from "../../config/config";
+import DocumentApi from "../../Services/Controllers/Documents";
+import ChatAPI from "../../Services/Controllers/Chats";
+import UsersAPI from "../../Services/Controllers/Users";
 import {
   Box,
   Typography,
-  Select,
-  MenuItem,
   FormControl,
   IconButton,
   Button,
-  Modal,
-  TextField,
 } from "@mui/material";
+import BalanceIcon from "@mui/icons-material/Balance";
+import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
-import io from "socket.io-client";
-import MessageContainer from "../components/MessageContainer";
-import Message from "../components/Message";
-import DocumentApi from "../../Services/Controllers/Documents";
-import SideBar from "../components/SideBar";
-import ChatAPI from "../../Services/Controllers/Chats";
-import config from "../../config/config";
-const socket = io(config.BACKEND_URL);
+import {
+  MessageContainer,
+  Message,
+  SideBar,
+  ModalContext,
+  ModalSearch,
+} from "../components";
 
+const socket = io(config.BACKEND_URL);
+const idUser = UsersAPI.getID();
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
@@ -29,7 +33,8 @@ const Chat = () => {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [savedChats, setSavedChats] = useState([]);
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
-  const [context, setContext] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [searchType, setsearchType] = useState("documentos");
 
   useEffect(() => {
     const handleResponse = (data) => {
@@ -56,10 +61,12 @@ const Chat = () => {
   useEffect(() => {
     async function fetchData() {
       const response = await DocumentApi.getDocuments();
-      const response2 = await ChatAPI.getChats(1);
-      setSavedChats(response2.data);
+      const response2 = await ChatAPI.getChats(idUser);
+      if (!response2.error) {
+        setSavedChats(response2.data);
+      }
+
       setdocumentsList(response.data);
-      setSelectedValue(response.data[0].folder);
     }
 
     fetchData();
@@ -67,12 +74,14 @@ const Chat = () => {
 
   const handleSendMessage = async () => {
     if (currentMessage.trim()) {
+      console.log({ selectedValue });
       if (messages.length == 0) {
         const result = await ChatAPI.createChat(
-          1,
+          idUser,
           currentMessage.substring(0, 45)
         );
-        const response2 = await ChatAPI.getChats(1);
+        const response2 = await ChatAPI.getChats(idUser);
+
         setSavedChats(response2.data);
         socket.emit(
           "message",
@@ -80,7 +89,7 @@ const Chat = () => {
             text: currentMessage,
             folder: selectedValue,
             chat_id: result.data.chat_id,
-            usuario_id: 1,
+            usuario_id: idUser,
           })
         );
         setSelectedChatId(result.data.chat_id);
@@ -91,7 +100,7 @@ const Chat = () => {
             text: currentMessage,
             folder: selectedValue,
             chat_id: selectedChatId,
-            usuario_id: 1,
+            usuario_id: idUser,
           })
         );
       }
@@ -115,55 +124,25 @@ const Chat = () => {
   };
 
   const handleChatSelection = async (chatId) => {
-    const response = await ChatAPI.getMessages(1, chatId);
-
+    const response = await ChatAPI.getMessages(idUser, chatId);
     setSelectedChatId(chatId);
+    console.log(response.data);
     setMessages(response.data.contenido);
   };
 
   const handleOpenContextModal = async () => {
-    try {
-      const response = await ChatAPI.getContext(selectedChatId);
-      setContext(response.data.contexto);
-    } catch (error) {
-      console.error("Error al cargar el contexto:", error);
-    }
     setIsContextModalOpen(true);
   };
 
-  const handleCloseContextModal = () => {
-    setIsContextModalOpen(false);
-  };
-
-  const handleSendContext = async () => {
-    if (context.trim()) {
-      if (messages.length === 0) {
-        const result = await ChatAPI.createChat(1, context.substring(0, 45));
-        const response2 = await ChatAPI.getChats(1);
-        setSavedChats(response2.data);
-
-        await ChatAPI.updateContexto(result.data.chat_id, context);
-        socket.emit(
-          "message",
-          JSON.stringify({
-            text: context,
-            folder: selectedValue,
-            chat_id: result.data.chat_id,
-            usuario_id: 1,
-          })
-        );
-
-        setIsContextModalOpen(false);
-        setContext("");
-        setSelectedChatId(result.data.chat_id);
-        setMessages((prev) => [...prev, { text: context, sender: "user" }]);
-        setCurrentMessage("");
-      } else {
-        ChatAPI.updateContexto(selectedChatId, context);
-        setIsContextModalOpen(false);
-        setContext("");
-      }
+  const handleConfirm = (type, option) => {
+    if (type === "jurisprudencias") {
+      return;
     }
+    if (type === "documentos") {
+      setSelectedValue(option);
+      return;
+    }
+    setsearchType(type);
   };
 
   return (
@@ -172,7 +151,6 @@ const Chat = () => {
         color="inherit"
         aria-label="menu"
         onClick={toggleDrawer(true)}
-        sx={{ color: "white" }}
       >
         <MenuIcon />
       </IconButton>
@@ -185,53 +163,23 @@ const Chat = () => {
           maxWidth: "100%",
           margin: "0 auto",
           padding: "16px",
-          backgroundColor: "#292a2d",
           fontFamily: "'Roboto', sans-serif",
         }}
       >
         <Box display="flex" alignItems="center" justifyContent="center">
-          <Typography variant="h5" align="center" color="white" gutterBottom>
-            Selecciona el Documento:
-          </Typography>
-          <FormControl variant="outlined" style={{ marginLeft: "16px" }}>
-            <Select
-              labelId="select-label"
-              value={selectedValue}
-              onChange={(event) => setSelectedValue(event.target.value)}
-              label="Selecciona una opción"
-              sx={{
-                color: "white",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "white",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "white",
-                },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "white",
-                },
-              }}
-            >
-              {documentsList.map((item, index) => (
-                <MenuItem key={index} value={item.folder}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </Select>
+          <FormControl
+            variant="outlined"
+            style={{ marginLeft: "16px" }}
+            onClick={() => setModalOpen(true)}
+          >
+            <Button variant="contained">
+              <SearchIcon />
+            </Button>
           </FormControl>
+
           <FormControl variant="outlined" style={{ marginLeft: "16px" }}>
-            <Button
-              variant="contained"
-              onClick={handleOpenContextModal}
-              sx={{
-                backgroundColor: "#3f51b5",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "#303f9f",
-                },
-              }}
-            >
-              Contexto
+            <Button variant="contained" onClick={handleOpenContextModal}>
+              <BalanceIcon />
             </Button>
           </FormControl>
         </Box>
@@ -246,17 +194,17 @@ const Chat = () => {
               textAlign: "center",
             }}
           >
-            <Typography variant="h5" color="white" gutterBottom>
-              Hola! soy LegisBot
+            <Typography variant="h5" gutterBottom>
+              Hola! soy Halach Bot
             </Typography>
-            <Typography variant="body1" color="white">
+            <Typography variant="body1">
               ¿En que te puedo ayudar hoy?
             </Typography>
           </Box>
         ) : (
-          <></>
+          <MessageContainer messages={messages} />
         )}
-        <MessageContainer messages={messages} />
+
         <Message
           currentMessage={currentMessage}
           setCurrentMessage={setCurrentMessage}
@@ -272,40 +220,24 @@ const Chat = () => {
         setSavedChats={setSavedChats}
         setMessages={setMessages}
       />
-
-      <Modal
-        open={isContextModalOpen}
-        onClose={() => setIsContextModalOpen(false)}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "400px",
-            backgroundColor: "white",
-            padding: "16px",
-            borderRadius: "8px",
-          }}
-        >
-          <TextField
-            multiline
-            rows={4}
-            placeholder="Proporciona un contexto o caso específico..."
-            value={context}
-            onChange={(e) => setContext(e.target.value)}
-            sx={{ width: "100%", marginBottom: "8px" }}
-          />
-          <Button
-            variant="contained"
-            onClick={handleSendContext}
-            sx={{ width: "100%" }}
-          >
-            Guardar contexto
-          </Button>
-        </Box>
-      </Modal>
+      <ModalContext
+        selectedChatId={selectedChatId}
+        setSelectedChatId={setSelectedChatId}
+        setIsContextModalOpen={setIsContextModalOpen}
+        isContextModalOpen={isContextModalOpen}
+        messages={messages}
+        setMessages={setMessages}
+        setSavedChats={setSavedChats}
+        setCurrentMessage={setCurrentMessage}
+        socket={socket}
+        selectedValue={selectedValue}
+      />
+      <ModalSearch
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={handleConfirm}
+        documentsList={documentsList}
+      />
     </div>
   );
 };
