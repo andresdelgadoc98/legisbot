@@ -11,10 +11,15 @@ import Cookies from "js-cookie";
 const renewAccessToken = async () => {
   try {
     const refreshToken = Cookies.get("refresh_token");
-    console.log({ refreshToken });
-    if (!refreshToken) throw new Error("No hay refresh token");
+    console.log("Refresh token:", refreshToken);
+
+    if (!refreshToken) {
+      throw new Error("No hay refresh token");
+    }
 
     const res = await Users.getrefreshToken(refreshToken);
+    console.log("Respuesta del servidor:", res); // Depuración
+
     if (res.data && res.data.access_token) {
       return res.data.access_token;
     } else {

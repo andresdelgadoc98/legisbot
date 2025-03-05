@@ -39,13 +39,12 @@ const Login = () => {
         if (res.data && res.data.access_token && res.data.refresh_token) {
           localStorage.setItem("accessToken", res.data.access_token);
           Cookies.set("refresh_token", res.data.refresh_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            httponly: false,
+            secure: false,
+            samesite: "lax",
             expires: 7,
           });
           const refreshToken = Cookies.get("refresh_token");
-          console.log({ refreshToken });
 
           console.log("Login exitoso. Tokens guardados.");
           window.location.href = "/";

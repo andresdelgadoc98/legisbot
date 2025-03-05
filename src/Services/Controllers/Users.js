@@ -34,6 +34,9 @@ const getrefreshToken = async (refresh_token) => {
         headers: {
           "Content-Type": "application/json",
         },
+      },
+      {
+        withCredentials: true,
       }
     )
   );
@@ -42,7 +45,6 @@ const getrefreshToken = async (refresh_token) => {
 const getID = () => {
   try {
     const accessToken = localStorage.getItem("accessToken");
-
     if (!accessToken) {
       console.error("No se encontró el token de acceso");
       return null;
