@@ -101,7 +101,7 @@ const Chat = () => {
     }
 
     if (currentMessage.trim()) {
-      if (messages.length == 0) {
+      if (messages.length == 0 && selectedChatId == null) {
         const result = await ChatAPI.createChat(
           idUser,
           currentMessage.substring(0, 45)
@@ -280,6 +280,7 @@ const Chat = () => {
         selectedValue={selectedValue}
         context={context}
         setContext={setContext}
+        searchType={searchType}
       />
       <ModalSearch
         open={modalOpen}
