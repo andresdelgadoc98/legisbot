@@ -20,13 +20,11 @@ export default function ModalContext({
 
   useEffect(() => {
     async function fetchData() {
-      if (selectedChatId) {
-        try {
-          const response = await ChatAPI.getContext(selectedChatId);
-          setContext(response.data.contexto);
-        } catch (error) {
-          console.error("Error al cargar el contexto:", error);
-        }
+      try {
+        const response = await ChatAPI.getContext(selectedChatId);
+        setContext(response.data.contexto);
+      } catch (error) {
+        console.error("Error al cargar el contexto:", error);
       }
     }
 
