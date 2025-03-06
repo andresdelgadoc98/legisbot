@@ -29,7 +29,7 @@ export default function ModalContext({
     }
 
     fetchData();
-  }, []);
+  }, [isContextModalOpen]);
 
   const handleSendContext = async () => {
     if (context.trim()) {
