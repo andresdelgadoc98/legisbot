@@ -22,6 +22,8 @@ import {
   ModalSearch,
 } from "../components";
 
+import { useNavigate, useLocation } from "react-router-dom";
+
 const socket = io(config.BACKEND_URL);
 const idUser = UsersAPI.getID();
 const Chat = () => {
@@ -37,6 +39,23 @@ const Chat = () => {
   const [searchType, setsearchType] = useState(null);
   const [context, setContext] = useState("");
   const [name_file, setname_file] = useState("#");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    async function fetchData() {
+      const searchParams = new URLSearchParams(location.search);
+      const chatIdFromUrl = searchParams.get("chatId");
+      const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
+
+      if (chatIdFromUrl) {
+        setSelectedChatId(chatIdFromUrl);
+        setMessages(response.data.contenido);
+      }
+    }
+    fetchData();
+  }, [location.search]);
 
   useEffect(() => {
     const handleResponse = (data) => {
@@ -165,8 +184,12 @@ const Chat = () => {
   const handleChatSelection = async (chatId) => {
     const response = await ChatAPI.getMessages(idUser, chatId);
     setSelectedChatId(chatId);
-
     setMessages(response.data.contenido);
+
+    // Actualizar la URL con el nuevo chatId
+    const searchParams = new URLSearchParams();
+    searchParams.set("chatId", chatId);
+    navigate({ search: searchParams.toString() });
   };
 
   const handleOpenContextModal = async () => {

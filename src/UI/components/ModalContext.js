@@ -6,6 +6,7 @@ import UsersAPI from "../../Services/Controllers/Users";
 const idUser = UsersAPI.getID();
 
 export default function ModalContext({
+  searchType,
   selectedChatId,
   setIsContextModalOpen,
   isContextModalOpen,
@@ -46,6 +47,7 @@ export default function ModalContext({
             folder: selectedValue,
             chat_id: result.data.chat_id,
             usuario_id: idUser,
+            searchType: searchType,
           })
         );
 

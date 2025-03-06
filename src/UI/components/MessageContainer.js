@@ -1,14 +1,20 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Box, List, ListItem } from "@mui/material";
+import { Box, List, ListItem, IconButton } from "@mui/material";
+import { ContentCopy } from "@mui/icons-material"; // Ícono de copiar
 import remarkGfm from "remark-gfm";
 
 export default function MessageContainer({ messages }) {
   const messagesEndRef = useRef(null);
+  const [hoveredMessageIndex, setHoveredMessageIndex] = useState(null); // Estado para controlar el hover
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const handleCopyMessage = (text) => {
+    navigator.clipboard.writeText(text).then(() => {});
+  };
 
   return (
     <Box
@@ -27,7 +33,11 @@ export default function MessageContainer({ messages }) {
             sx={{
               justifyContent:
                 message.sender === "user" ? "flex-end" : "flex-start",
+              flexDirection: "column", // Alinear el ícono debajo del mensaje
+              alignItems: message.sender === "user" ? "flex-end" : "flex-start",
             }}
+            onMouseEnter={() => setHoveredMessageIndex(index)} // Mostrar ícono al hacer hover
+            onMouseLeave={() => setHoveredMessageIndex(null)} // Ocultar ícono al salir del hover
           >
             <Box
               sx={{
@@ -41,6 +51,12 @@ export default function MessageContainer({ messages }) {
                 {message.text}
               </ReactMarkdown>
             </Box>
+
+            {hoveredMessageIndex === index && (
+              <IconButton onClick={() => handleCopyMessage(message.text)}>
+                <ContentCopy />
+              </IconButton>
+            )}
           </ListItem>
         ))}
       </List>
