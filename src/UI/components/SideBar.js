@@ -4,6 +4,7 @@ import ChatsAPI from "../../Services/Controllers/Chats";
 import ChatList from "./chatList";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MessageIcon from "@mui/icons-material/Message";
+
 export default function SideBar({
   isDrawerOpen,
   toggleDrawer,
@@ -11,6 +12,7 @@ export default function SideBar({
   savedChats,
   setSavedChats,
   setMessages,
+  setSelectedChatId,
 }) {
   const handleRename = (chatId) => {
     const newTitle = prompt("Enter new title:");
@@ -39,7 +41,7 @@ export default function SideBar({
 
   const handleNewChat = () => {
     console.log("Creando nuevo chat...");
-
+    setSelectedChatId(null);
     setMessages([]);
 
     toggleDrawer(false);

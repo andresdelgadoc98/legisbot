@@ -34,7 +34,9 @@ const Chat = () => {
   const [savedChats, setSavedChats] = useState([]);
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [searchType, setsearchType] = useState("documentos");
+  const [searchType, setsearchType] = useState(null);
+  const [context, setContext] = useState("");
+  const [name_file, setname_file] = useState("#");
 
   useEffect(() => {
     const handleResponse = (data) => {
@@ -61,6 +63,7 @@ const Chat = () => {
   useEffect(() => {
     async function fetchData() {
       const response = await DocumentApi.getDocuments();
+      console.log({ response });
       const response2 = await ChatAPI.getChats(idUser);
       if (!response2.error) {
         setSavedChats(response2.data);
@@ -72,9 +75,32 @@ const Chat = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      if (selectedChatId !== null) {
+        try {
+          const response = await ChatAPI.getContext(selectedChatId);
+          setContext(response.data.contexto);
+        } catch (error) {
+          console.error("Error al cargar el contexto:", error);
+        }
+      } else {
+        setContext("");
+      }
+    }
+
+    fetchData();
+  }, [selectedChatId]);
+
   const handleSendMessage = async () => {
+    if (searchType === "jurisprudencias" && context.length === 0) {
+      alert(
+        "Por favor, proporciona un contexto antes de buscar jurisprudencias."
+      );
+      return;
+    }
+
     if (currentMessage.trim()) {
-      console.log({ selectedValue });
       if (messages.length == 0) {
         const result = await ChatAPI.createChat(
           idUser,
@@ -83,6 +109,18 @@ const Chat = () => {
         const response2 = await ChatAPI.getChats(idUser);
 
         setSavedChats(response2.data);
+        setSelectedChatId(result.data.chat_id);
+
+        setMessages((prev) => [
+          ...prev,
+          { text: currentMessage, sender: "user" },
+        ]);
+        setCurrentMessage("");
+
+        if (messages.length === 0 && searchType === "jurisprudencias") {
+          return;
+        }
+
         socket.emit(
           "message",
           JSON.stringify({
@@ -90,10 +128,16 @@ const Chat = () => {
             folder: selectedValue,
             chat_id: result.data.chat_id,
             usuario_id: idUser,
+            searchType: searchType,
           })
         );
-        setSelectedChatId(result.data.chat_id);
       } else {
+        setMessages((prev) => [
+          ...prev,
+          { text: currentMessage, sender: "user" },
+        ]);
+        setCurrentMessage("");
+
         socket.emit(
           "message",
           JSON.stringify({
@@ -101,15 +145,10 @@ const Chat = () => {
             folder: selectedValue,
             chat_id: selectedChatId,
             usuario_id: idUser,
+            searchType: searchType,
           })
         );
       }
-
-      setMessages((prev) => [
-        ...prev,
-        { text: currentMessage, sender: "user" },
-      ]);
-      setCurrentMessage("");
     }
   };
 
@@ -126,7 +165,7 @@ const Chat = () => {
   const handleChatSelection = async (chatId) => {
     const response = await ChatAPI.getMessages(idUser, chatId);
     setSelectedChatId(chatId);
-    console.log(response.data);
+
     setMessages(response.data.contenido);
   };
 
@@ -135,14 +174,19 @@ const Chat = () => {
   };
 
   const handleConfirm = (type, option) => {
+    setsearchType(type);
     if (type === "jurisprudencias") {
       return;
     }
     if (type === "documentos") {
       setSelectedValue(option);
+      setname_file(documentsList.find((doc) => doc.folder === option)["file"]);
       return;
     }
-    setsearchType(type);
+    if (type === "general") {
+      setsearchType(null);
+      setSelectedValue("");
+    }
   };
 
   return (
@@ -209,6 +253,8 @@ const Chat = () => {
           currentMessage={currentMessage}
           setCurrentMessage={setCurrentMessage}
           handleSendMessage={handleSendMessage}
+          searchType={searchType}
+          name_file={name_file}
         />
       </Box>
 
@@ -219,6 +265,7 @@ const Chat = () => {
         savedChats={savedChats}
         setSavedChats={setSavedChats}
         setMessages={setMessages}
+        setSelectedChatId={setSelectedChatId}
       />
       <ModalContext
         selectedChatId={selectedChatId}
@@ -231,12 +278,16 @@ const Chat = () => {
         setCurrentMessage={setCurrentMessage}
         socket={socket}
         selectedValue={selectedValue}
+        context={context}
+        setContext={setContext}
       />
       <ModalSearch
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onConfirm={handleConfirm}
         documentsList={documentsList}
+        selectedType={searchType}
+        setSelectedType={setsearchType}
       />
     </div>
   );

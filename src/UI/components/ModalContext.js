@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, Modal, TextField } from "@mui/material";
 import ChatAPI from "../../Services/Controllers/Chats";
 import UsersAPI from "../../Services/Controllers/Users";
+
 const idUser = UsersAPI.getID();
 
 export default function ModalContext({
@@ -15,38 +16,33 @@ export default function ModalContext({
   setSelectedChatId,
   setMessages,
   setCurrentMessage,
+  context: parentContext, // Recibir el contexto del padre
+  setContext: setParentContext, // Recibir la función para actualizar el contexto en el padre
 }) {
-  const [context, setContext] = useState("");
+  // Estado interno para el contexto
+  const [localContext, setLocalContext] = useState(parentContext);
 
+  // Sincronizar el estado interno con el valor del padre
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await ChatAPI.getContext(selectedChatId);
-        setContext(response.data.contexto);
-      } catch (error) {
-        console.error("Error al cargar el contexto:", error);
-      }
-    }
-
-    fetchData();
-  }, [isContextModalOpen]);
+    setLocalContext(parentContext);
+  }, [parentContext]);
 
   const handleSendContext = async () => {
-    if (context.trim()) {
+    if (localContext.trim()) {
       if (messages.length === 0) {
         const result = await ChatAPI.createChat(
           idUser,
-          context.substring(0, 45)
+          localContext.substring(0, 45)
         );
         const response2 = await ChatAPI.getChats(idUser);
         setSavedChats(response2.data);
 
-        await ChatAPI.updateContexto(result.data.chat_id, context);
+        await ChatAPI.updateContexto(result.data.chat_id, localContext);
 
         socket.emit(
           "message",
           JSON.stringify({
-            text: context,
+            text: localContext,
             folder: selectedValue,
             chat_id: result.data.chat_id,
             usuario_id: idUser,
@@ -54,15 +50,19 @@ export default function ModalContext({
         );
 
         setIsContextModalOpen(false);
-        setContext("");
         setSelectedChatId(result.data.chat_id);
-        setMessages((prev) => [...prev, { text: context, sender: "user" }]);
+        setMessages((prev) => [
+          ...prev,
+          { text: localContext, sender: "user" },
+        ]);
         setCurrentMessage("");
       } else {
-        ChatAPI.updateContexto(selectedChatId, context);
+        ChatAPI.updateContexto(selectedChatId, localContext);
         setIsContextModalOpen(false);
-        setContext("");
       }
+
+      // Actualizar el contexto en el padre solo al confirmar
+      setParentContext(localContext);
     }
   };
 
@@ -87,8 +87,8 @@ export default function ModalContext({
           multiline
           rows={4}
           placeholder="Proporciona un contexto o caso específico..."
-          value={context}
-          onChange={(e) => setContext(e.target.value)}
+          value={localContext} // Usar el estado interno
+          onChange={(e) => setLocalContext(e.target.value)} // Actualizar el estado interno
           sx={{ width: "100%", marginBottom: "8px" }}
         />
         <Button

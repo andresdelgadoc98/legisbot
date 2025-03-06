@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Box, List, ListItem } from "@mui/material";
+import remarkGfm from "remark-gfm";
 
 export default function MessageContainer({ messages }) {
   const messagesEndRef = useRef(null);
@@ -36,7 +37,9 @@ export default function MessageContainer({ messages }) {
                 maxWidth: "70%",
               }}
             >
-              <ReactMarkdown>{message.text}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {message.text}
+              </ReactMarkdown>
             </Box>
           </ListItem>
         ))}

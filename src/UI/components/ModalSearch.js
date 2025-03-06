@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
   Typography,
-  TextField,
   Select,
   MenuItem,
   Button,
@@ -14,35 +13,30 @@ import {
   Radio,
 } from "@mui/material";
 
-const ModalSearch = ({ open, onClose, onConfirm, documentsList }) => {
-  const [selectedType, setSelectedType] = useState("documentos");
+const ModalSearch = ({
+  open,
+  onClose,
+  onConfirm,
+  documentsList,
+  selectedType: initialSelectedType,
+}) => {
+  const [selectedType, setSelectedType] = useState(initialSelectedType);
   const [selectedOption, setSelectedOption] = useState("");
-  const [keyword, setKeyword] = useState("");
 
-  const documentos = [
-    { id: 1, name: "Contrato de Arrendamiento" },
-    { id: 2, name: "Acta Constitutiva" },
-    { id: 3, name: "Demanda Civil" },
-  ];
+  useEffect(() => {
+    setSelectedType(initialSelectedType);
+  }, [initialSelectedType]);
 
   const handleTypeChange = (event) => {
     setSelectedType(event.target.value);
-    setSelectedOption(""); // Reiniciar la selección al cambiar el tipo
-    setKeyword(""); // Reiniciar la palabra clave
-  };
-
-  const handleKeywordChange = (event) => {
-    setKeyword(event.target.value);
+    setSelectedOption("");
   };
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
+
   const handleConfirm = () => {
-    if (selectedType === "jurisprudencias" && keyword.trim() === "") {
-      alert("Por favor, ingresa una palabra clave.");
-      return;
-    }
     if (selectedType === "documentos" && selectedOption === "") {
       alert("Por favor, selecciona un documento.");
       return;
@@ -50,7 +44,7 @@ const ModalSearch = ({ open, onClose, onConfirm, documentsList }) => {
 
     onConfirm(
       selectedType,
-      selectedType === "jurisprudencias" ? keyword : selectedOption
+      selectedType === "jurisprudencias" ? "" : selectedOption
     );
     onClose();
   };
@@ -63,7 +57,6 @@ const ModalSearch = ({ open, onClose, onConfirm, documentsList }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
@@ -74,6 +67,7 @@ const ModalSearch = ({ open, onClose, onConfirm, documentsList }) => {
           Selecciona una opción
         </Typography>
 
+        {/* RadioGroup para seleccionar el tipo (Leyes o Jurisprudencias) */}
         <FormControl component="fieldset" sx={{ mb: 2 }}>
           <RadioGroup row value={selectedType} onChange={handleTypeChange}>
             <FormControlLabel
@@ -86,18 +80,13 @@ const ModalSearch = ({ open, onClose, onConfirm, documentsList }) => {
               control={<Radio />}
               label="Jurisprudencias"
             />
+            <FormControlLabel
+              value="general"
+              control={<Radio />}
+              label="General"
+            />
           </RadioGroup>
         </FormControl>
-
-        {selectedType === "jurisprudencias" && (
-          <TextField
-            fullWidth
-            label="Palabra clave"
-            value={keyword}
-            onChange={handleKeywordChange}
-            sx={{ mb: 3 }}
-          />
-        )}
 
         {selectedType === "documentos" && (
           <FormControl fullWidth sx={{ mb: 3 }}>
