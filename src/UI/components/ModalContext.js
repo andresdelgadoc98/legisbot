@@ -38,7 +38,9 @@ export default function ModalContext({
         setSavedChats(response2.data);
 
         await ChatAPI.updateContexto(result.data.chat_id, localContext);
-        setIsBotResponding(true);
+        setIsContextModalOpen(false);
+        setSelectedChatId(result.data.chat_id);
+        /*   setIsBotResponding(true);
         socket.emit(
           "message",
           JSON.stringify({
@@ -47,16 +49,20 @@ export default function ModalContext({
             chat_id: result.data.chat_id,
             usuario_id: idUser,
             searchType: searchType,
-          })
+          }) 
         );
 
-        setIsContextModalOpen(false);
-        setSelectedChatId(result.data.chat_id);
+
         setMessages((prev) => [
           ...prev,
           { text: localContext, sender: "user" },
         ]);
-        setCurrentMessage("");
+        setCurrentMessage(""); */
+
+        setMessages((prev) => [
+          ...prev,
+          { text: "Contexto Guardado Correctamente", sender: "bot" },
+        ]);
       } else {
         ChatAPI.updateContexto(selectedChatId, localContext);
         setIsContextModalOpen(false);

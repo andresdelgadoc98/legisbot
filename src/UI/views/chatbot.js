@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
+
 import config from "../../config/config";
 import DocumentApi from "../../Services/Controllers/Documents";
 import ChatAPI from "../../Services/Controllers/Chats";
@@ -26,8 +26,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import SearchTypeButton from "../components/SearchTypeButton";
 import ModalSettings from "../components/ModalSettings";
 import myImage from "./chatbot.png";
-const socket = io(config.BACKEND_URL);
+import io from "socket.io-client";
+const socket = io(config.BACKEND_URL, {
+  transports: ["websocket"],
+});
 const idUser = UsersAPI.getID();
+
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
@@ -50,27 +54,6 @@ const Chat = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-
-  useEffect(() => {
-    async function fetchData() {
-      const searchParams = new URLSearchParams(location.search);
-      const chatIdFromUrl = searchParams.get("chatId");
-
-      if (chatIdFromUrl) {
-        const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
-
-        if (response.data) {
-          setSelectedChatId(chatIdFromUrl);
-          setMessages(response.data.contenido);
-        } else {
-          navigate("/");
-        }
-      } else {
-        navigate("/");
-      }
-    }
-    fetchData();
-  }, [location.search]);
 
   useEffect(() => {
     async function fetchData() {
@@ -105,6 +88,36 @@ const Chat = () => {
 
     fetchData();
   }, [selectedChatId]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const searchParams = new URLSearchParams(location.search);
+      const chatIdFromUrl = searchParams.get("chatId");
+
+      if (chatIdFromUrl) {
+        const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
+        const folder = response.data.preferencia.document;
+        console.log(folder);
+        console.log({ documentsList });
+        const nameFile =
+          documentsList.find((doc) => doc.folder === folder)?.file || null;
+
+        setname_file(nameFile);
+        setsearchType(response.data.preferencia.searchType);
+        setSelectedValue(response.data.preferencia.document);
+
+        if (response.data) {
+          setSelectedChatId(chatIdFromUrl);
+          setMessages(response.data.contenido);
+        } else {
+          navigate("/");
+        }
+      } else {
+        navigate("/");
+      }
+    }
+    fetchData();
+  }, [location.search, documentsList]);
 
   const handleSendMessage = async () => {
     if (searchType === "jurisprudencias" && context.length === 0) {
@@ -184,8 +197,11 @@ const Chat = () => {
 
   const handleChatSelection = async (chatId) => {
     const response = await ChatAPI.getMessages(idUser, chatId);
+
+    setsearchType(response.data.preferencia.searchType);
     setSelectedChatId(chatId);
     setMessages(response.data.contenido);
+    setSelectedValue(response.data.preferencia.document);
     const searchParams = new URLSearchParams();
     searchParams.set("chatId", chatId);
     navigate({ search: searchParams.toString() });
@@ -195,19 +211,24 @@ const Chat = () => {
     setIsContextModalOpen(true);
   };
 
-  const handleConfirm = (type, option) => {
+  const handleConfirm = async (type, option) => {
     setsearchType(type);
     if (type === "jurisprudencias") {
+      ChatAPI.putPreferences(selectedChatId, type, null);
       return;
     }
+
     if (type === "documentos") {
       setSelectedValue(option);
       setname_file(documentsList.find((doc) => doc.folder === option)["file"]);
+      ChatAPI.putPreferences(selectedChatId, type, option);
       return;
     }
+
     if (type === "general") {
       setsearchType(null);
       setSelectedValue("");
+      ChatAPI.putPreferences(selectedChatId, null, "");
     }
   };
 
@@ -407,6 +428,7 @@ const Chat = () => {
         documentsList={documentsList}
         selectedType={searchType}
         setSelectedType={setsearchType}
+        selectedValue={selectedValue}
       />
       <ModalSettings
         isOpen={isProfileModalOpen}

@@ -76,11 +76,30 @@ const getContext = async (id_chat) => {
   );
 };
 
+const putPreferences = async (id_chat, searchType, document) => {
+  return await resolve(
+    axios.put(
+      `${config.BACKEND_URL}/${name}/${id_chat}/preferencia`,
+      {
+        preferencia: {
+          searchType,
+          document,
+        },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  );
+};
+
 chats.getChats = getChats;
 chats.createChat = createChat;
 chats.getMessages = getMessages;
 chats.deleteChat = deleteChat;
 chats.updateContexto = updateContexto;
 chats.getContext = getContext;
-
+chats.putPreferences = putPreferences;
 export default chats;
