@@ -1,7 +1,14 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Box, List, ListItem, IconButton, useTheme } from "@mui/material";
-import { ContentCopy } from "@mui/icons-material"; // Ícono de copiar
+import {
+  Box,
+  List,
+  ListItem,
+  IconButton,
+  useTheme,
+  Typography,
+} from "@mui/material";
+import { ContentCopy } from "@mui/icons-material";
 import remarkGfm from "remark-gfm";
 
 export default function MessageContainer({ messages }) {
@@ -40,7 +47,24 @@ export default function MessageContainer({ messages }) {
                 maxWidth: "70%",
               }}
             >
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: ({ node, ...props }) => (
+                    <Typography
+                      component="a"
+                      {...props}
+                      sx={{
+                        color: "primary.main",
+                        textDecoration: "none",
+                        "&:hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
+                    />
+                  ),
+                }}
+              >
                 {message.text}
               </ReactMarkdown>
             </Box>

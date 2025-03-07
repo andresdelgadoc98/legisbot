@@ -36,6 +36,7 @@ export default function SideBar({
 
       ChatsAPI.deleteChat(chatId);
       setMessages([]);
+      navigate("/");
     }
   };
 

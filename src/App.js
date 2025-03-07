@@ -75,7 +75,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
-  const { theme } = useContext(ThemeContext); // Obtén el tema del contexto
+  const { theme } = useContext(ThemeContext);
 
   const darkTheme = createTheme({
     palette: {
@@ -91,8 +91,34 @@ function App() {
     },
   });
 
+  const pinkTheme = createTheme({
+    palette: {
+      primary: {
+        main: "#e91e63",
+        light: "#f06292",
+        dark: "#c2185b",
+        contrastText: "#ffffff",
+      },
+      secondary: {
+        main: "#ff4081",
+        light: "#ff79b0",
+        dark: "#c60055",
+        contrastText: "#ffffff",
+      },
+      background: {
+        default: "#white",
+      },
+      chatUser: "#f06292",
+    },
+  });
+  const themes = {
+    dark: darkTheme,
+    pink: pinkTheme,
+    light: lightTheme,
+  };
+
   return (
-    <MuiThemeProvider theme={theme === "dark" ? darkTheme : lightTheme}>
+    <MuiThemeProvider theme={themes[theme] || darkTheme}>
       <CssBaseline />
       <div className="App">
         <BrowserRouter>

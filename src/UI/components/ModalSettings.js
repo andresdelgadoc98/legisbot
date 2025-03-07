@@ -130,7 +130,7 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
             >
               <MenuItem value="light">Claro</MenuItem>
               <MenuItem value="dark">Oscuro</MenuItem>
-              <MenuItem value="system">Sistema</MenuItem>
+              <MenuItem value="pink">Rosa</MenuItem>
             </Select>
           </FormControl>
         </TabPanel>
