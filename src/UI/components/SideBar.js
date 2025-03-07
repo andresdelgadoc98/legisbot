@@ -3,7 +3,7 @@ import { Box, Typography, Drawer, List, Button } from "@mui/material";
 import ChatsAPI from "../../Services/Controllers/Chats";
 import ChatList from "./chatList";
 import MessageIcon from "@mui/icons-material/Message";
-
+import { useNavigate } from "react-router-dom";
 export default function SideBar({
   isDrawerOpen,
   toggleDrawer,
@@ -23,6 +23,7 @@ export default function SideBar({
       );
     }
   };
+  const navigate = useNavigate();
 
   const handleDelete = (chatId) => {
     const confirmDelete = window.confirm(
@@ -40,6 +41,7 @@ export default function SideBar({
 
   const handleNewChat = () => {
     console.log("Creando nuevo chat...");
+    navigate("/");
     setSelectedChatId(null);
     setMessages([]);
 

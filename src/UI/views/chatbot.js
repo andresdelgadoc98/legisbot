@@ -55,11 +55,18 @@ const Chat = () => {
     async function fetchData() {
       const searchParams = new URLSearchParams(location.search);
       const chatIdFromUrl = searchParams.get("chatId");
-      const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
 
       if (chatIdFromUrl) {
-        setSelectedChatId(chatIdFromUrl);
-        setMessages(response.data.contenido);
+        const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
+
+        if (response.data) {
+          setSelectedChatId(chatIdFromUrl);
+          setMessages(response.data.contenido);
+        } else {
+          navigate("/");
+        }
+      } else {
+        navigate("/");
       }
     }
     fetchData();

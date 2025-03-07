@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,12 +10,15 @@ import {
 import Users from "../../Services/Controllers/Users";
 import Cookies from "js-cookie";
 import myImage from "./chatbot.png";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom"; // Importa useNavigate
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -45,7 +48,6 @@ const Login = () => {
             samesite: "lax",
             expires: 7,
           });
-          const refreshToken = Cookies.get("refresh_token");
 
           console.log("Login exitoso. Tokens guardados.");
           window.location.href = "/";
@@ -57,6 +59,27 @@ const Login = () => {
       }
     }
   };
+
+  const checkToken = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (accessToken) {
+      try {
+        const decodedToken = jwtDecode(accessToken);
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp > currentTime) {
+          navigate("/");
+        }
+      } catch (error) {
+        localStorage.removeItem("accessToken");
+        Cookies.remove("refresh_token");
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkToken();
+  }, [navigate]);
 
   return (
     <Container maxWidth="sm">

@@ -67,7 +67,6 @@ const ModalSearch = ({
           Selecciona una opción
         </Typography>
 
-        {/* RadioGroup para seleccionar el tipo (Leyes o Jurisprudencias) */}
         <FormControl component="fieldset" sx={{ mb: 2 }}>
           <RadioGroup row value={selectedType} onChange={handleTypeChange}>
             <FormControlLabel
