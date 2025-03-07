@@ -17,15 +17,7 @@ export default function MessageContainer({ messages }) {
   };
 
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        overflowY: "auto",
-        padding: "16px",
-        marginBottom: "16px",
-        maxHeight: "70vh",
-      }}
-    >
+    <Box sx={{}}>
       <List>
         {messages.map((message, index) => (
           <ListItem
@@ -33,11 +25,9 @@ export default function MessageContainer({ messages }) {
             sx={{
               justifyContent:
                 message.sender === "user" ? "flex-end" : "flex-start",
-              flexDirection: "column", // Alinear el ícono debajo del mensaje
+              flexDirection: "column",
               alignItems: message.sender === "user" ? "flex-end" : "flex-start",
             }}
-            onMouseEnter={() => setHoveredMessageIndex(index)} // Mostrar ícono al hacer hover
-            onMouseLeave={() => setHoveredMessageIndex(null)} // Ocultar ícono al salir del hover
           >
             <Box
               sx={{

@@ -21,8 +21,9 @@ import {
   ModalContext,
   ModalSearch,
 } from "../components";
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate, useLocation } from "react-router-dom";
+import SearchTypeButton from "../components/SearchTypeButton";
 
 const socket = io(config.BACKEND_URL);
 const idUser = UsersAPI.getID();
@@ -214,71 +215,114 @@ const Chat = () => {
 
   return (
     <div>
-      <IconButton
-        color="inherit"
-        aria-label="menu"
-        onClick={toggleDrawer(true)}
-      >
-        <MenuIcon />
-      </IconButton>
-
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          height: "90vh",
-          maxWidth: "100%",
-          margin: "0 auto",
-          padding: "16px",
+          position: "relative",
+          height: "100dvh",
+          width: "100%",
           fontFamily: "'Roboto', sans-serif",
+          overflow: "hidden",
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="center">
-          <FormControl
-            variant="outlined"
-            style={{ marginLeft: "16px" }}
-            onClick={() => setModalOpen(true)}
+        {/* Header fijo */}
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "64px", // Altura fija del header
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "16px",
+            zIndex: 1000,
+          }}
+        >
+          <IconButton
+            color="inherit"
+            aria-label="menu"
+            onClick={toggleDrawer(true)}
           >
-            <Button variant="contained">
-              <SearchIcon />
-            </Button>
-          </FormControl>
-
-          <FormControl variant="outlined" style={{ marginLeft: "16px" }}>
-            <Button variant="contained" onClick={handleOpenContextModal}>
-              <BalanceIcon />
-            </Button>
-          </FormControl>
-        </Box>
-        {messages.length === 0 ? (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="h5" gutterBottom>
-              Hola! soy Halach Bot
-            </Typography>
-            <Typography variant="body1">
-              ¿En que te puedo ayudar hoy?
-            </Typography>
+            <MenuIcon />
+          </IconButton>
+          <Box display="flex" alignItems="center">
+            <FormControl variant="outlined" sx={{ ml: 2 }}>
+              <SearchTypeButton searchType={searchType} name_file={name_file} />
+            </FormControl>
+            <FormControl variant="outlined" sx={{ ml: 2 }}>
+              <Button variant="contained" onClick={() => setModalOpen(true)}>
+                <SearchIcon />
+              </Button>
+            </FormControl>
+            <FormControl variant="outlined" sx={{ ml: 2 }}>
+              <Button variant="contained" onClick={handleOpenContextModal}>
+                <BalanceIcon />
+              </Button>
+            </FormControl>
+            <FormControl variant="outlined" sx={{ ml: 2 }}>
+              <Button variant="contained">
+                <AccountCircleIcon />
+              </Button>
+            </FormControl>
           </Box>
-        ) : (
-          <MessageContainer messages={messages} />
-        )}
+        </Box>
 
-        <Message
-          currentMessage={currentMessage}
-          setCurrentMessage={setCurrentMessage}
-          handleSendMessage={handleSendMessage}
-          searchType={searchType}
-          name_file={name_file}
-        />
+        {/* Área scrollable para los mensajes */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "4rem", // Justo debajo del header
+            bottom: "64px", // Justo encima del input de mensajes
+            left: 0,
+            right: 0,
+            overflowY: "auto", // El scroll se restringe a esta zona
+            p: 2,
+          }}
+        >
+          {messages.length === 0 ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <Typography variant="h5" gutterBottom>
+                Hola! soy Halach Bot
+              </Typography>
+              <Typography variant="body1">
+                ¿En qué te puedo ayudar hoy?
+              </Typography>
+            </Box>
+          ) : (
+            <MessageContainer messages={messages} />
+          )}
+        </Box>
+
+        {/* Input de mensajes fijo en la parte inferior */}
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            width: "100%",
+            height: "64px",
+            boxShadow: "0px -2px 4px rgba(0,0,0,0.1)",
+            zIndex: 1000,
+            p: 1,
+          }}
+        >
+          <Message
+            currentMessage={currentMessage}
+            setCurrentMessage={setCurrentMessage}
+            handleSendMessage={handleSendMessage}
+            searchType={searchType}
+            name_file={name_file}
+          />
+        </Box>
       </Box>
 
       <SideBar

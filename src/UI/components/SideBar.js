@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Typography, Drawer, List, Button } from "@mui/material";
 import ChatsAPI from "../../Services/Controllers/Chats";
 import ChatList from "./chatList";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MessageIcon from "@mui/icons-material/Message";
 
 export default function SideBar({
@@ -59,13 +58,6 @@ export default function SideBar({
         onKeyDown={toggleDrawer(false)}
       >
         <Box sx={{ padding: "16px" }}>
-          <Button
-            variant="contained"
-            fullWidth
-            startIcon={<AccountCircleIcon />}
-          >
-            Perfil
-          </Button>
           <Button
             variant="contained"
             fullWidth
