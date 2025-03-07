@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import Users from "../../Services/Controllers/Users";
 import Cookies from "js-cookie";
+import myImage from "./chatbot.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -71,6 +72,26 @@ const Login = () => {
           Iniciar Sesión
         </Typography>
 
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center", // Centra horizontalmente
+          }}
+        >
+          <Box
+            component="img"
+            src={myImage}
+            alt="Descripción de la imagen"
+            sx={{
+              width: "50%",
+              height: "auto",
+              borderRadius: 2,
+            }}
+          />
+        </Box>
+        <Typography variant="h4" align="center" gutterBottom>
+          Halach Bot ⚖️
+        </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"

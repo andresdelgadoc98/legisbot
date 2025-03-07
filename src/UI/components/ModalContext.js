@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Box, Button, Modal, TextField, Typography } from "@mui/material";
 import ChatAPI from "../../Services/Controllers/Chats";
 import UsersAPI from "../../Services/Controllers/Users";
 
@@ -67,6 +67,9 @@ export default function ModalContext({
       setParentContext(localContext);
     }
   };
+  const close = () => {
+    setIsContextModalOpen(false);
+  };
 
   return (
     <Modal
@@ -85,6 +88,9 @@ export default function ModalContext({
           backgroundColor: "background.paper",
         }}
       >
+        <Typography variant="h6" component="h2" gutterBottom>
+          Guarda el Contexto
+        </Typography>
         <TextField
           multiline
           rows={4}
@@ -93,13 +99,15 @@ export default function ModalContext({
           onChange={(e) => setLocalContext(e.target.value)} // Actualizar el estado interno
           sx={{ width: "100%", marginBottom: "8px" }}
         />
-        <Button
-          variant="contained"
-          onClick={handleSendContext}
-          sx={{ width: "100%" }}
-        >
-          Guardar contexto
-        </Button>
+
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          <Button variant="outlined" onClick={close}>
+            Cancelar
+          </Button>
+          <Button variant="contained" onClick={handleSendContext}>
+            Confirmar
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

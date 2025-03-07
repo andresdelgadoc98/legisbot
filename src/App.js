@@ -74,9 +74,18 @@ function App() {
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
+      chatUser: "#424242",
     },
   });
+  const lightTheme = createTheme({
+    palette: {
+      mode: "light",
 
+      chatUser: "#B5E5E9",
+    },
+  });
+  //B5E5E9
+  //#424242
   return (
     <ThemeProvider theme={darkTheme} defaultMode="dark">
       <CssBaseline />

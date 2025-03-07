@@ -1,12 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Box, List, ListItem, IconButton } from "@mui/material";
+import { Box, List, ListItem, IconButton, useTheme } from "@mui/material";
 import { ContentCopy } from "@mui/icons-material"; // Ícono de copiar
 import remarkGfm from "remark-gfm";
 
 export default function MessageContainer({ messages }) {
+  const theme = useTheme();
   const messagesEndRef = useRef(null);
-  const [hoveredMessageIndex, setHoveredMessageIndex] = useState(null); // Estado para controlar el hover
+  const [hoveredMessageIndex, setHoveredMessageIndex] = useState(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,9 +32,11 @@ export default function MessageContainer({ messages }) {
           >
             <Box
               sx={{
-                backgroundColor: message.sender === "user" ? "#424242" : "",
-                padding: "10px",
-                borderRadius: "8px",
+                backgroundColor:
+                  message.sender === "user" ? theme.palette.chatUser : "",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                borderRadius: "16px",
                 maxWidth: "70%",
               }}
             >
