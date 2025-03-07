@@ -64,6 +64,22 @@ const getID = () => {
   }
 };
 
+const getInfo = async (idUser) => {
+  return await resolve(
+    axios.get(
+      `${config.BACKEND_URL}/${name}/${idUser}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+      {
+        withCredentials: true,
+      }
+    )
+  );
+};
+users.getInfo = getInfo;
 users.login = login;
 users.getrefreshToken = getrefreshToken;
 users.getID = getID;

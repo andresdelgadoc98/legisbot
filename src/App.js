@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import ChatBot from "./UI/views/chatbot";
 import Login from "./UI/views/Login";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import {
+  ThemeProvider as MuiThemeProvider,
+  createTheme,
+} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { jwtDecode } from "jwt-decode";
 import Users from "./Services/Controllers/Users";
 import Cookies from "js-cookie";
+import { ThemeContext, ThemeProvider } from "../src/UI/components/ThemeContext"; // Importa el contexto
 
 const renewAccessToken = async () => {
   try {
@@ -71,23 +75,24 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const { theme } = useContext(ThemeContext); // Obtén el tema del contexto
+
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
       chatUser: "#424242",
     },
   });
+
   const lightTheme = createTheme({
     palette: {
       mode: "light",
-
       chatUser: "#B5E5E9",
     },
   });
-  //B5E5E9
-  //#424242
+
   return (
-    <ThemeProvider theme={darkTheme} defaultMode="dark">
+    <MuiThemeProvider theme={theme === "dark" ? darkTheme : lightTheme}>
       <CssBaseline />
       <div className="App">
         <BrowserRouter>
@@ -104,8 +109,14 @@ function App() {
           </Routes>
         </BrowserRouter>
       </div>
-    </ThemeProvider>
+    </MuiThemeProvider>
   );
 }
 
-export default App;
+export default function Root() {
+  return (
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  );
+}

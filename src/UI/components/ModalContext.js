@@ -17,13 +17,12 @@ export default function ModalContext({
   setSelectedChatId,
   setMessages,
   setCurrentMessage,
-  context: parentContext, // Recibir el contexto del padre
-  setContext: setParentContext, // Recibir la función para actualizar el contexto en el padre
+  context: parentContext,
+  setContext: setParentContext,
+  setIsBotResponding,
 }) {
-  // Estado interno para el contexto
   const [localContext, setLocalContext] = useState(parentContext);
 
-  // Sincronizar el estado interno con el valor del padre
   useEffect(() => {
     setLocalContext(parentContext);
   }, [parentContext]);
@@ -39,7 +38,7 @@ export default function ModalContext({
         setSavedChats(response2.data);
 
         await ChatAPI.updateContexto(result.data.chat_id, localContext);
-
+        setIsBotResponding(true);
         socket.emit(
           "message",
           JSON.stringify({
@@ -63,7 +62,6 @@ export default function ModalContext({
         setIsContextModalOpen(false);
       }
 
-      // Actualizar el contexto en el padre solo al confirmar
       setParentContext(localContext);
     }
   };
@@ -95,15 +93,12 @@ export default function ModalContext({
           multiline
           rows={4}
           placeholder="Proporciona un contexto o caso específico..."
-          value={localContext} // Usar el estado interno
-          onChange={(e) => setLocalContext(e.target.value)} // Actualizar el estado interno
+          value={localContext}
+          onChange={(e) => setLocalContext(e.target.value)}
           sx={{ width: "100%", marginBottom: "8px" }}
         />
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button variant="outlined" onClick={close}>
-            Cancelar
-          </Button>
           <Button variant="contained" onClick={handleSendContext}>
             Confirmar
           </Button>

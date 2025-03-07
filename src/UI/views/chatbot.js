@@ -24,7 +24,8 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate, useLocation } from "react-router-dom";
 import SearchTypeButton from "../components/SearchTypeButton";
-
+import ModalSettings from "../components/ModalSettings";
+import myImage from "./chatbot.png";
 const socket = io(config.BACKEND_URL);
 const idUser = UsersAPI.getID();
 const Chat = () => {
@@ -40,8 +41,14 @@ const Chat = () => {
   const [searchType, setsearchType] = useState(null);
   const [context, setContext] = useState("");
   const [name_file, setname_file] = useState("#");
-
+  const [isBotResponding, setIsBotResponding] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [dataUser, setdataUser] = useState({
+    nombre: "",
+    email: "",
+  });
   const navigate = useNavigate();
+
   const location = useLocation();
 
   useEffect(() => {
@@ -59,34 +66,14 @@ const Chat = () => {
   }, [location.search]);
 
   useEffect(() => {
-    const handleResponse = (data) => {
-      setMessages((prev) => {
-        const lastMessage = prev[prev.length - 1];
-        if (lastMessage?.sender === "bot") {
-          return [
-            ...prev.slice(0, -1),
-            { text: lastMessage.text + data, sender: "bot" },
-          ];
-        }
-        return [...prev, { text: data, sender: "bot" }];
-      });
-    };
-
-    socket.on("response", handleResponse);
-    socket.on("response_end", () => {});
-    return () => {
-      socket.off("response", handleResponse);
-      socket.off("response_end");
-    };
-  }, []);
-
-  useEffect(() => {
     async function fetchData() {
       const response = await DocumentApi.getDocuments();
-      console.log({ response });
       const response2 = await ChatAPI.getChats(idUser);
+      const response3 = await UsersAPI.getInfo(idUser);
+
       if (!response2.error) {
         setSavedChats(response2.data);
+        setdataUser(response3.data);
       }
 
       setdocumentsList(response.data);
@@ -117,6 +104,10 @@ const Chat = () => {
       alert(
         "Por favor, proporciona un contexto antes de buscar jurisprudencias."
       );
+      return;
+    }
+
+    if (isBotResponding) {
       return;
     }
 
@@ -151,6 +142,7 @@ const Chat = () => {
             searchType: searchType,
           })
         );
+        setIsBotResponding(true);
       } else {
         setMessages((prev) => [
           ...prev,
@@ -168,6 +160,7 @@ const Chat = () => {
             searchType: searchType,
           })
         );
+        setIsBotResponding(true);
       }
     }
   };
@@ -186,8 +179,6 @@ const Chat = () => {
     const response = await ChatAPI.getMessages(idUser, chatId);
     setSelectedChatId(chatId);
     setMessages(response.data.contenido);
-
-    // Actualizar la URL con el nuevo chatId
     const searchParams = new URLSearchParams();
     searchParams.set("chatId", chatId);
     navigate({ search: searchParams.toString() });
@@ -213,6 +204,40 @@ const Chat = () => {
     }
   };
 
+  useEffect(() => {
+    const handleResponse = (data) => {
+      setMessages((prev) => {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage?.sender === "bot") {
+          return [
+            ...prev.slice(0, -1),
+            { text: lastMessage.text + data, sender: "bot" },
+          ];
+        }
+        return [...prev, { text: data, sender: "bot" }];
+      });
+    };
+
+    const handleResponseEnd = () => {
+      setIsBotResponding(false);
+    };
+
+    socket.on("response", handleResponse);
+    socket.on("response_end", handleResponseEnd);
+    return () => {
+      socket.off("response", handleResponse);
+      socket.off("response_end", handleResponseEnd);
+    };
+  }, [socket]);
+
+  const handleOpenModal = () => {
+    setIsProfileModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsProfileModalOpen(false);
+  };
+
   return (
     <div>
       <Box
@@ -224,14 +249,13 @@ const Chat = () => {
           overflow: "hidden",
         }}
       >
-        {/* Header fijo */}
         <Box
           sx={{
             position: "fixed",
             top: 0,
             left: 0,
             width: "100%",
-            height: "64px", // Altura fija del header
+            height: "64px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -261,22 +285,21 @@ const Chat = () => {
               </Button>
             </FormControl>
             <FormControl variant="outlined" sx={{ ml: 2 }}>
-              <Button variant="contained">
+              <Button variant="contained" onClick={handleOpenModal}>
                 <AccountCircleIcon />
               </Button>
             </FormControl>
           </Box>
         </Box>
 
-        {/* Área scrollable para los mensajes */}
         <Box
           sx={{
             position: "absolute",
-            top: "4rem", // Justo debajo del header
-            bottom: "64px", // Justo encima del input de mensajes
+            top: "4rem",
+            bottom: "64px",
             left: 0,
             right: 0,
-            overflowY: "auto", // El scroll se restringe a esta zona
+            overflowY: "auto",
             p: 2,
           }}
         >
@@ -290,19 +313,38 @@ const Chat = () => {
                 height: "100%",
               }}
             >
-              <Typography variant="h5" gutterBottom>
-                Hola! soy Halach Bot
-              </Typography>
-              <Typography variant="body1">
-                ¿En qué te puedo ayudar hoy?
-              </Typography>
+              <Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Box
+                    component="img"
+                    src={myImage}
+                    alt="Halach Bot"
+                    sx={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                    }}
+                  />
+
+                  <Typography
+                    variant="h5"
+                    sx={{ mt: 1, textAlign: "center" }}
+                    gutterBottom
+                  >
+                    ¡Hola! Soy Halach Bot
+                  </Typography>
+                </Box>
+
+                <Typography variant="body1" sx={{ mt: 1, textAlign: "center" }}>
+                  ¿En qué te puedo ayudar hoy?
+                </Typography>
+              </Box>
             </Box>
           ) : (
             <MessageContainer messages={messages} />
           )}
         </Box>
 
-        {/* Input de mensajes fijo en la parte inferior */}
         <Box
           sx={{
             position: "fixed",
@@ -321,6 +363,7 @@ const Chat = () => {
             handleSendMessage={handleSendMessage}
             searchType={searchType}
             name_file={name_file}
+            isBotResponding={isBotResponding}
           />
         </Box>
       </Box>
@@ -348,6 +391,7 @@ const Chat = () => {
         context={context}
         setContext={setContext}
         searchType={searchType}
+        setIsBotResponding={setIsBotResponding}
       />
       <ModalSearch
         open={modalOpen}
@@ -356,6 +400,11 @@ const Chat = () => {
         documentsList={documentsList}
         selectedType={searchType}
         setSelectedType={setsearchType}
+      />
+      <ModalSettings
+        isOpen={isProfileModalOpen}
+        onClose={handleCloseModal}
+        dataUser={dataUser}
       />
     </div>
   );

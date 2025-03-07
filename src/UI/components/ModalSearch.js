@@ -107,9 +107,6 @@ const ModalSearch = ({
         )}
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button variant="outlined" onClick={onClose}>
-            Cancelar
-          </Button>
           <Button variant="contained" onClick={handleConfirm}>
             Confirmar
           </Button>

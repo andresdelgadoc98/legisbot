@@ -7,6 +7,7 @@ export default function Message({
   setCurrentMessage,
   handleSendMessage,
   searchType,
+  isBotResponding,
 }) {
   const placeholder =
     searchType === "documentos"
@@ -29,7 +30,7 @@ export default function Message({
       />
 
       <Button variant="contained" onClick={handleSendMessage}>
-        <ArrowUpwardIcon />
+        {isBotResponding ? "..." : <ArrowUpwardIcon />}
       </Button>
     </Box>
   );
