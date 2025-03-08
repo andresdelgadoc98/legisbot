@@ -12,6 +12,8 @@ export default function SideBar({
   setSavedChats,
   setMessages,
   setSelectedChatId,
+  setSelectedValue,
+  setsearchType,
 }) {
   const handleRename = (chatId) => {
     const newTitle = prompt("Enter new title:");
@@ -45,7 +47,8 @@ export default function SideBar({
     navigate("/");
     setSelectedChatId(null);
     setMessages([]);
-
+    setSelectedValue("");
+    setsearchType(null);
     toggleDrawer(false);
   };
 

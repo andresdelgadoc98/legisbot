@@ -13,7 +13,7 @@ import {
   FormControl,
 } from "@mui/material";
 import Cookies from "js-cookie";
-import { ThemeContext } from "./ThemeContext";
+import { ThemeContext } from "../ThemeContext";
 import { useNavigate } from "react-router-dom";
 
 const TabPanel = (props) => {

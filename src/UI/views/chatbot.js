@@ -1,32 +1,22 @@
 import React, { useState, useEffect } from "react";
-
 import config from "../../config/config";
 import DocumentApi from "../../Services/Controllers/Documents";
 import ChatAPI from "../../Services/Controllers/Chats";
 import UsersAPI from "../../Services/Controllers/Users";
-import {
-  Box,
-  Typography,
-  FormControl,
-  IconButton,
-  Button,
-} from "@mui/material";
-import BalanceIcon from "@mui/icons-material/Balance";
-import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
+import { Box, Typography } from "@mui/material";
 import {
   MessageContainer,
   Message,
   SideBar,
   ModalContext,
   ModalSearch,
+  Header,
 } from "../components";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate, useLocation } from "react-router-dom";
-import SearchTypeButton from "../components/SearchTypeButton";
-import ModalSettings from "../components/ModalSettings";
+import ModalSettings from "../components/Modals/ModalSettings";
 import myImage from "./chatbot.png";
 import io from "socket.io-client";
+
 const socket = io(config.BACKEND_URL, {
   transports: ["websocket"],
 });
@@ -36,13 +26,13 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
+  const [searchType, setsearchType] = useState(null);
   const [documentsList, setdocumentsList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [savedChats, setSavedChats] = useState([]);
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [searchType, setsearchType] = useState(null);
   const [context, setContext] = useState("");
   const [name_file, setname_file] = useState("#");
   const [isBotResponding, setIsBotResponding] = useState(false);
@@ -52,7 +42,6 @@ const Chat = () => {
     email: "",
   });
   const navigate = useNavigate();
-
   const location = useLocation();
 
   useEffect(() => {
@@ -117,7 +106,33 @@ const Chat = () => {
       }
     }
     fetchData();
-  }, [location.search, documentsList]);
+  }, [documentsList]);
+
+  useEffect(() => {
+    const handleResponse = (data) => {
+      setMessages((prev) => {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage?.sender === "bot") {
+          return [
+            ...prev.slice(0, -1),
+            { text: lastMessage.text + data, sender: "bot" },
+          ];
+        }
+        return [...prev, { text: data, sender: "bot" }];
+      });
+    };
+
+    const handleResponseEnd = () => {
+      setIsBotResponding(false);
+    };
+
+    socket.on("response", handleResponse);
+    socket.on("response_end", handleResponseEnd);
+    return () => {
+      socket.off("response", handleResponse);
+      socket.off("response_end", handleResponseEnd);
+    };
+  }, [socket]);
 
   const handleSendMessage = async () => {
     if (searchType === "jurisprudencias" && context.length === 0) {
@@ -138,15 +153,23 @@ const Chat = () => {
           currentMessage.substring(0, 45)
         );
         const response2 = await ChatAPI.getChats(idUser);
+        await ChatAPI.putPreferences(
+          result.data.chat_id,
+          searchType,
+          selectedValue
+        );
 
         setSavedChats(response2.data);
         setSelectedChatId(result.data.chat_id);
-
         setMessages((prev) => [
           ...prev,
           { text: currentMessage, sender: "user" },
         ]);
         setCurrentMessage("");
+
+        const searchParams = new URLSearchParams();
+        searchParams.set("chatId", result.data.chat_id);
+        navigate({ search: searchParams.toString() });
 
         if (messages.length === 0 && searchType === "jurisprudencias") {
           return;
@@ -207,56 +230,38 @@ const Chat = () => {
     navigate({ search: searchParams.toString() });
   };
 
-  const handleOpenContextModal = async () => {
-    setIsContextModalOpen(true);
-  };
-
   const handleConfirm = async (type, option) => {
-    setsearchType(type);
     if (type === "jurisprudencias") {
-      ChatAPI.putPreferences(selectedChatId, type, null);
+      setsearchType(type);
+      if (selectedChatId !== null) {
+        const resulut = await ChatAPI.putPreferences(
+          selectedChatId,
+          type,
+          null
+        );
+      }
+
       return;
     }
 
     if (type === "documentos") {
+      setsearchType(type);
       setSelectedValue(option);
       setname_file(documentsList.find((doc) => doc.folder === option)["file"]);
-      ChatAPI.putPreferences(selectedChatId, type, option);
+      if (selectedChatId !== null) {
+        await ChatAPI.putPreferences(selectedChatId, type, option);
+      }
       return;
     }
 
     if (type === "general") {
       setsearchType(null);
       setSelectedValue("");
-      ChatAPI.putPreferences(selectedChatId, null, "");
+      if (selectedChatId !== null) {
+        await ChatAPI.putPreferences(selectedChatId, null, "");
+      }
     }
   };
-
-  useEffect(() => {
-    const handleResponse = (data) => {
-      setMessages((prev) => {
-        const lastMessage = prev[prev.length - 1];
-        if (lastMessage?.sender === "bot") {
-          return [
-            ...prev.slice(0, -1),
-            { text: lastMessage.text + data, sender: "bot" },
-          ];
-        }
-        return [...prev, { text: data, sender: "bot" }];
-      });
-    };
-
-    const handleResponseEnd = () => {
-      setIsBotResponding(false);
-    };
-
-    socket.on("response", handleResponse);
-    socket.on("response_end", handleResponseEnd);
-    return () => {
-      socket.off("response", handleResponse);
-      socket.off("response_end", handleResponseEnd);
-    };
-  }, [socket]);
 
   const handleOpenModal = () => {
     setIsProfileModalOpen(true);
@@ -264,6 +269,10 @@ const Chat = () => {
 
   const handleCloseModal = () => {
     setIsProfileModalOpen(false);
+  };
+
+  const handleOpenContextModal = () => {
+    setIsContextModalOpen(true);
   };
 
   return (
@@ -277,49 +286,14 @@ const Chat = () => {
           overflow: "hidden",
         }}
       >
-        <Box
-          sx={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "64px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "16px",
-            zIndex: 1000,
-          }}
-        >
-          <IconButton
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleDrawer(true)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box display="flex" alignItems="center">
-            <FormControl variant="outlined" sx={{ ml: 2 }}>
-              <SearchTypeButton searchType={searchType} name_file={name_file} />
-            </FormControl>
-            <FormControl variant="outlined" sx={{ ml: 2 }}>
-              <Button variant="contained" onClick={() => setModalOpen(true)}>
-                <SearchIcon />
-              </Button>
-            </FormControl>
-            <FormControl variant="outlined" sx={{ ml: 2 }}>
-              <Button variant="contained" onClick={handleOpenContextModal}>
-                <BalanceIcon />
-              </Button>
-            </FormControl>
-            <FormControl variant="outlined" sx={{ ml: 2 }}>
-              <Button variant="contained" onClick={handleOpenModal}>
-                <AccountCircleIcon />
-              </Button>
-            </FormControl>
-          </Box>
-        </Box>
-
+        <Header
+          toggleDrawer={toggleDrawer}
+          searchType={searchType}
+          name_file={name_file}
+          setModalOpen={setModalOpen}
+          handleOpenContextModal={handleOpenContextModal}
+          handleOpenModal={handleOpenModal}
+        />
         <Box
           sx={{
             position: "absolute",
@@ -404,6 +378,8 @@ const Chat = () => {
         setSavedChats={setSavedChats}
         setMessages={setMessages}
         setSelectedChatId={setSelectedChatId}
+        setSelectedValue={setSelectedValue}
+        setsearchType={setsearchType}
       />
       <ModalContext
         selectedChatId={selectedChatId}
@@ -413,13 +389,12 @@ const Chat = () => {
         messages={messages}
         setMessages={setMessages}
         setSavedChats={setSavedChats}
-        setCurrentMessage={setCurrentMessage}
         socket={socket}
-        selectedValue={selectedValue}
         context={context}
         setContext={setContext}
+        handleConfirm={handleConfirm}
         searchType={searchType}
-        setIsBotResponding={setIsBotResponding}
+        selectedValue={selectedValue}
       />
       <ModalSearch
         open={modalOpen}

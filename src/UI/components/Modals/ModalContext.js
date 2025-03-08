@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, Modal, TextField, Typography } from "@mui/material";
-import ChatAPI from "../../Services/Controllers/Chats";
-import UsersAPI from "../../Services/Controllers/Users";
-
+import ChatAPI from "../../../Services/Controllers/Chats";
+import UsersAPI from "../../../Services/Controllers/Users";
+import { useNavigate } from "react-router-dom";
 const idUser = UsersAPI.getID();
 
 export default function ModalContext({
-  searchType,
   selectedChatId,
   setIsContextModalOpen,
   isContextModalOpen,
   messages,
   setSavedChats,
-  socket,
-  selectedValue,
   setSelectedChatId,
   setMessages,
-  setCurrentMessage,
   context: parentContext,
   setContext: setParentContext,
-  setIsBotResponding,
+  searchType,
+  selectedValue,
 }) {
   const [localContext, setLocalContext] = useState(parentContext);
-
+  const navigate = useNavigate();
   useEffect(() => {
     setLocalContext(parentContext);
   }, [parentContext]);
@@ -36,43 +33,32 @@ export default function ModalContext({
         );
         const response2 = await ChatAPI.getChats(idUser);
         setSavedChats(response2.data);
-
         await ChatAPI.updateContexto(result.data.chat_id, localContext);
         setIsContextModalOpen(false);
         setSelectedChatId(result.data.chat_id);
-        /*   setIsBotResponding(true);
-        socket.emit(
-          "message",
-          JSON.stringify({
-            text: localContext,
-            folder: selectedValue,
-            chat_id: result.data.chat_id,
-            usuario_id: idUser,
-            searchType: searchType,
-          }) 
-        );
-
-
-        setMessages((prev) => [
-          ...prev,
-          { text: localContext, sender: "user" },
-        ]);
-        setCurrentMessage(""); */
-
         setMessages((prev) => [
           ...prev,
           { text: "Contexto Guardado Correctamente", sender: "bot" },
         ]);
+        const searchParams = new URLSearchParams();
+        searchParams.set("chatId", result.data.chat_id);
+        navigate({ search: searchParams.toString() });
+
+        await ChatAPI.putPreferences(
+          result.data.chat_id,
+          searchType,
+          selectedValue
+        );
       } else {
-        ChatAPI.updateContexto(selectedChatId, localContext);
-        setIsContextModalOpen(false);
+        if (selectedChatId !== null) {
+          ChatAPI.updateContexto(selectedChatId, localContext);
+
+          setIsContextModalOpen(false);
+        }
       }
 
       setParentContext(localContext);
     }
-  };
-  const close = () => {
-    setIsContextModalOpen(false);
   };
 
   return (
