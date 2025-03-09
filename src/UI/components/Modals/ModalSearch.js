@@ -19,13 +19,15 @@ const ModalSearch = ({
   onConfirm,
   documentsList,
   selectedType: initialSelectedType,
+  selectedValue,
 }) => {
   const [selectedType, setSelectedType] = useState(initialSelectedType);
   const [selectedOption, setSelectedOption] = useState("");
 
   useEffect(() => {
     setSelectedType(initialSelectedType);
-  }, [initialSelectedType]);
+    setSelectedOption(selectedValue);
+  }, [initialSelectedType, selectedValue]);
 
   const handleTypeChange = (event) => {
     setSelectedType(event.target.value);

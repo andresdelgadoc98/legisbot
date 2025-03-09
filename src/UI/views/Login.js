@@ -79,7 +79,7 @@ const Login = () => {
 
   useEffect(() => {
     checkToken();
-  }, [navigate]);
+  }, []);
 
   return (
     <Container maxWidth="sm">

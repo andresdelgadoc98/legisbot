@@ -1,6 +1,3 @@
-import axios from "axios";
-import config from "../config/config";
-
 export async function resolve(promise) {
   const resolved = {
     data: null,

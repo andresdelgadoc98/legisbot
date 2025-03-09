@@ -106,7 +106,7 @@ const Chat = () => {
       }
     }
     fetchData();
-  }, [documentsList]);
+  }, [documentsList, location.search, navigate]);
 
   useEffect(() => {
     const handleResponse = (data) => {
@@ -132,7 +132,7 @@ const Chat = () => {
       socket.off("response", handleResponse);
       socket.off("response_end", handleResponseEnd);
     };
-  }, [socket]);
+  }, []);
 
   const handleSendMessage = async () => {
     if (searchType === "jurisprudencias" && context.length === 0) {
@@ -147,7 +147,7 @@ const Chat = () => {
     }
 
     if (currentMessage.trim()) {
-      if (messages.length == 0 && selectedChatId == null) {
+      if (messages.length === 0 && selectedChatId === null) {
         const result = await ChatAPI.createChat(
           idUser,
           currentMessage.substring(0, 45)
@@ -234,11 +234,7 @@ const Chat = () => {
     if (type === "jurisprudencias") {
       setsearchType(type);
       if (selectedChatId !== null) {
-        const resulut = await ChatAPI.putPreferences(
-          selectedChatId,
-          type,
-          null
-        );
+        await ChatAPI.putPreferences(selectedChatId, type, null);
       }
 
       return;
@@ -333,7 +329,7 @@ const Chat = () => {
                     sx={{ mt: 1, textAlign: "center" }}
                     gutterBottom
                   >
-                    ¡Hola! Soy Halach Bot
+                    ¡Hola! Soy Halach IA
                   </Typography>
                 </Box>
 

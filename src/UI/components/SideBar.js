@@ -58,12 +58,21 @@ export default function SideBar({
         sx={{
           width: 250,
           height: "100%",
+          display: "flex",
+          flexDirection: "column",
         }}
         role="presentation"
         onClick={toggleDrawer(false)}
         onKeyDown={toggleDrawer(false)}
       >
-        <Box sx={{ padding: "16px" }}>
+        <Box
+          sx={{
+            padding: "16px",
+            position: "sticky",
+            top: 0,
+            zIndex: 1, // Asegura que el botón esté por encima del contenido
+          }}
+        >
           <Button
             variant="contained"
             fullWidth
@@ -75,17 +84,20 @@ export default function SideBar({
           </Button>
         </Box>
 
-        <Typography variant="h6" sx={{ padding: "16px" }}>
-          Chats Guardados
-        </Typography>
-        <List>
-          <ChatList
-            savedChats={savedChats}
-            handleChatSelection={handleChatSelection}
-            handleRename={handleRename}
-            handleDelete={handleDelete}
-          />
-        </List>
+        {/* Contenido desplazable */}
+        <Box sx={{ overflowY: "auto", flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ padding: "16px" }}>
+            Chats Guardados
+          </Typography>
+          <List>
+            <ChatList
+              savedChats={savedChats}
+              handleChatSelection={handleChatSelection}
+              handleRename={handleRename}
+              handleDelete={handleDelete}
+            />
+          </List>
+        </Box>
       </Box>
     </Drawer>
   );
