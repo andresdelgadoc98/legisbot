@@ -15,6 +15,7 @@ import { ThemeContext, ThemeProvider } from "../src/UI/components/ThemeContext";
 const renewAccessToken = async () => {
   try {
     const res = await tokenAPI.getAccessToken();
+    console.log({ res });
     if (res.data && res.data.access_token) {
       return res.data.access_token;
     } else {

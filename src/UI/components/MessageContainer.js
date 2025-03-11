@@ -53,6 +53,7 @@ export default function MessageContainer({ messages }) {
                   a: ({ node, ...props }) => (
                     <Typography
                       component="a"
+                      target="_blank"
                       {...props}
                       sx={{
                         color: "primary.main",

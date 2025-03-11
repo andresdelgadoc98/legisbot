@@ -15,14 +15,10 @@ const headers = {
 
 const login = async (email, password) => {
   return await resolve(
-    axios.post(
-      `${config.BACKEND_URL}/${name}/login`,
-      {
-        email,
-        password,
-      },
-      headers
-    )
+    axios.post(`${config.BACKEND_URL}/${name}/login`, {
+      email,
+      password,
+    })
   );
 };
 
@@ -49,25 +45,15 @@ const getID = () => {
 
 const getInfo = async (idUser) => {
   return await resolve(
-    axios.get(
-      `${config.BACKEND_URL}/${name}/${idUser}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-      {
-        withCredentials: true,
-      }
-    )
+    axios.get(`${config.BACKEND_URL}/${name}/${idUser}`, { headers })
   );
 };
 
 const logut = async (idUser) => {
-  localStorage.removeItem("accessToken");
-  Cookies.remove("refresh_token");
+  //localStorage.removeItem("accessToken");
+  //Cookies.remove("refresh_token");
   console.log("token removes");
-  window.location.reload();
+  //window.location.reload();
   return true;
 };
 

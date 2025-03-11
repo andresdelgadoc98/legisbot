@@ -22,11 +22,9 @@ const createChat = async (id_user, titulo) => {
   return await resolve(
     axios.post(
       `${config.BACKEND_URL}/${name}`,
-      { titulo, id_user }, // Datos del cuerpo de la solicitud
+      { titulo, id_user },
       {
-        headers: {
-          "Content-Type": "application/json", // Agregar el encabezado
-        },
+        headers,
       }
     )
   );
@@ -37,9 +35,7 @@ const getMessages = async (id_user, id_chat) => {
     axios.get(
       `${config.BACKEND_URL}/${name}/obtener_contenido_chat?chat_id=${id_chat}&usuario_id=${id_user}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
       }
     )
   );
@@ -48,9 +44,7 @@ const getMessages = async (id_user, id_chat) => {
 const deleteChat = async (id_chat) => {
   return await resolve(
     axios.delete(`${config.BACKEND_URL}/${name}/${id_chat}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     })
   );
 };
@@ -61,9 +55,7 @@ const updateContexto = async (id_chat, contexto) => {
       `${config.BACKEND_URL}/${name}/${id_chat}/contexto`,
       { contexto },
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
       }
     )
   );
@@ -72,9 +64,7 @@ const updateContexto = async (id_chat, contexto) => {
 const getContext = async (id_chat) => {
   return await resolve(
     axios.get(`${config.BACKEND_URL}/${name}/${id_chat}/contexto`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     })
   );
 };
@@ -90,9 +80,7 @@ const putPreferences = async (id_chat, searchType, document) => {
         },
       },
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
       }
     )
   );

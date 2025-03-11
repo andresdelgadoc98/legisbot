@@ -11,7 +11,9 @@ const headers = {
 };
 
 const getDocuments = async () => {
-  return await resolve(axios.get(`${config.BACKEND_URL}/${name}`), { headers });
+  return await resolve(axios.get(`${config.BACKEND_URL}/${name}`), {
+    headers,
+  });
 };
 
 documents.getDocuments = getDocuments;

@@ -21,7 +21,6 @@ const socket = io(config.BACKEND_URL, {
   transports: ["websocket"],
   path: "/api/socket.io",
 });
-
 const Chat = () => {
   const idUser = UsersAPI.getID();
   const [messages, setMessages] = useState([]);
@@ -52,6 +51,7 @@ const Chat = () => {
         const response2 = await ChatAPI.getChats(idUser);
 
         const response3 = await UsersAPI.getInfo(idUser);
+
         if (!response2.error) {
           setSavedChats(response2.data);
           setdataUser(response3.data);
@@ -173,10 +173,6 @@ const Chat = () => {
         searchParams.set("chatId", result.data.chat_id);
         navigate({ search: searchParams.toString() });
 
-        if (messages.length === 0 && searchType === "jurisprudencias") {
-          return;
-        }
-
         socket.emit(
           "message",
           JSON.stringify({
@@ -275,6 +271,17 @@ const Chat = () => {
 
   return (
     <div>
+      <Header
+        toggleDrawer={toggleDrawer}
+        searchType={searchType}
+        name_file={name_file}
+        setModalOpen={setModalOpen}
+        handleOpenContextModal={handleOpenContextModal}
+        handleOpenModal={handleOpenModal}
+        savedChats={savedChats}
+        selectedChatId={selectedChatId}
+      />
+
       <Box
         sx={{
           position: "relative",
@@ -284,14 +291,6 @@ const Chat = () => {
           overflow: "hidden",
         }}
       >
-        <Header
-          toggleDrawer={toggleDrawer}
-          searchType={searchType}
-          name_file={name_file}
-          setModalOpen={setModalOpen}
-          handleOpenContextModal={handleOpenContextModal}
-          handleOpenModal={handleOpenModal}
-        />
         <Box
           sx={{
             position: "absolute",

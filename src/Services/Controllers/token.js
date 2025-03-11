@@ -29,10 +29,8 @@ const very_access_token = async (access_token) => {
 };
 
 const getAccessToken = async () => {
-  return await axios.post(
-    `${config.BACKEND_URL}/${name}/refresh_token`,
-    {},
-    headers
+  return await resolve(
+    axios.post(`${config.BACKEND_URL}/${name}/refresh_token`, {}, { headers })
   );
 };
 
