@@ -17,9 +17,8 @@ import ModalSettings from "../components/Modals/ModalSettings";
 import myImage from "./chatbot.png";
 import io from "socket.io-client";
 
-const socket = io(config.BACKEND_URL, {
+const socket = io(config.WEB_SOCKET_URL, {
   transports: ["websocket"],
-  path: "/api/socket.io",
 });
 const Chat = () => {
   const idUser = UsersAPI.getID();
