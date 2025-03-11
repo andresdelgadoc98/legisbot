@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  ListItem,
+  ListItemButton,
   ListItemText,
   Menu,
   MenuItem,
@@ -31,8 +31,7 @@ const ChatList = ({ savedChats, handleChatSelection, handleDelete }) => {
   return (
     <>
       {savedChats.map((chat) => (
-        <ListItem
-          button
+        <ListItemButton
           key={chat.id}
           onClick={() => handleChatSelection(chat.id)}
           /*   sx={{
@@ -51,7 +50,7 @@ const ChatList = ({ savedChats, handleChatSelection, handleDelete }) => {
               <MoreVertIcon />
             </IconButton>
           </ListItemSecondaryAction>
-        </ListItem>
+        </ListItemButton>
       ))}
 
       <Menu

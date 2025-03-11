@@ -19,10 +19,11 @@ import io from "socket.io-client";
 
 const socket = io(config.BACKEND_URL, {
   transports: ["websocket"],
+  path: "/api/socket.io",
 });
-const idUser = UsersAPI.getID();
 
 const Chat = () => {
+  const idUser = UsersAPI.getID();
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
@@ -46,16 +47,19 @@ const Chat = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await DocumentApi.getDocuments();
-      const response2 = await ChatAPI.getChats(idUser);
-      const response3 = await UsersAPI.getInfo(idUser);
+      try {
+        const response = await DocumentApi.getDocuments();
+        const response2 = await ChatAPI.getChats(idUser);
 
-      if (!response2.error) {
-        setSavedChats(response2.data);
-        setdataUser(response3.data);
+        const response3 = await UsersAPI.getInfo(idUser);
+        if (!response2.error) {
+          setSavedChats(response2.data);
+          setdataUser(response3.data);
+        }
+        setdocumentsList(response.data);
+      } catch (e) {
+        console.log({ e });
       }
-
-      setdocumentsList(response.data);
     }
 
     fetchData();
@@ -83,11 +87,9 @@ const Chat = () => {
       const searchParams = new URLSearchParams(location.search);
       const chatIdFromUrl = searchParams.get("chatId");
 
-      if (chatIdFromUrl) {
+      if (chatIdFromUrl && documentsList.length > 0) {
         const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
         const folder = response.data.preferencia.document;
-        console.log(folder);
-        console.log({ documentsList });
         const nameFile =
           documentsList.find((doc) => doc.folder === folder)?.file || null;
 
@@ -106,7 +108,7 @@ const Chat = () => {
       }
     }
     fetchData();
-  }, [documentsList, location.search, navigate]);
+  }, [documentsList]);
 
   useEffect(() => {
     const handleResponse = (data) => {

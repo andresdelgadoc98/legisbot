@@ -5,13 +5,16 @@ import config from "../../config/config";
 const name = "chats";
 const chats = {};
 
+const accessToken = localStorage.getItem("accessToken");
+
+const headers = {
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${accessToken}`,
+};
+
 const getChats = async (id_user) => {
   return await resolve(
-    axios.get(`${config.BACKEND_URL}/${name}/${id_user}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    axios.get(`${config.BACKEND_URL}/${name}/${id_user}`, { headers })
   );
 };
 

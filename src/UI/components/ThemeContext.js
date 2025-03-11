@@ -9,7 +9,7 @@ export const ThemeProvider = ({ children }) => {
 
   const toggleTheme = (newTheme) => {
     setTheme(newTheme);
-    localStorage.setItem("theme", newTheme); // Guardar en localStorage
+    localStorage.setItem("theme", newTheme);
   };
 
   return (

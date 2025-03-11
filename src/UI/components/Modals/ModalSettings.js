@@ -12,10 +12,9 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import Cookies from "js-cookie";
-import { ThemeContext } from "../ThemeContext";
-import { useNavigate } from "react-router-dom";
 
+import { ThemeContext } from "../ThemeContext";
+import UsersAPI from "../../../Services/Controllers/Users";
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
@@ -57,17 +56,13 @@ const style = {
 const SettingsModal = ({ isOpen, onClose, dataUser }) => {
   const [tabValue, setTabValue] = useState(0);
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const navigate = useNavigate();
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    Cookies.remove("refresh_token");
-    navigate("/login");
-    window.location.reload();
+  const handleLogout = async () => {
+    const logut = UsersAPI.logut();
   };
 
   return (

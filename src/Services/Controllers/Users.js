@@ -2,9 +2,16 @@ import axios from "axios";
 import { resolve } from "../resolver";
 import config from "../../config/config";
 import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 const name = "users";
 const users = {};
+const accessToken = localStorage.getItem("accessToken");
+
+const headers = {
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${accessToken}`,
+};
 
 const login = async (email, password) => {
   return await resolve(
@@ -14,37 +21,13 @@ const login = async (email, password) => {
         email,
         password,
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-  );
-};
-
-const getrefreshToken = async (refresh_token) => {
-  return await resolve(
-    axios.post(
-      `${config.BACKEND_URL}/${name}/refresh_token`,
-      {
-        refresh_token,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-      {
-        withCredentials: true,
-      }
+      headers
     )
   );
 };
 
 const getID = () => {
   try {
-    const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
       console.error("No se encontró el token de acceso");
       return null;
@@ -79,8 +62,18 @@ const getInfo = async (idUser) => {
     )
   );
 };
+
+const logut = async (idUser) => {
+  localStorage.removeItem("accessToken");
+  Cookies.remove("refresh_token");
+  console.log("token removes");
+  window.location.reload();
+  return true;
+};
+
+users.logut = logut;
 users.getInfo = getInfo;
 users.login = login;
-users.getrefreshToken = getrefreshToken;
 users.getID = getID;
+
 export default users;

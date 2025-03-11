@@ -11,7 +11,8 @@ import Users from "../../Services/Controllers/Users";
 import Cookies from "js-cookie";
 import myImage from "./chatbot.png";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom"; // Importa useNavigate
+import { useNavigate } from "react-router-dom";
+import tokenAPI from "../../Services/Controllers/token";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -39,14 +40,13 @@ const Login = () => {
       try {
         console.log("Iniciando sesión con:", { email, password });
         const res = await Users.login(email, password);
-
         if (res.data && res.data.access_token && res.data.refresh_token) {
           localStorage.setItem("accessToken", res.data.access_token);
           Cookies.set("refresh_token", res.data.refresh_token, {
             httponly: false,
             secure: false,
             samesite: "lax",
-            expires: 7,
+            expires: 1,
           });
 
           console.log("Login exitoso. Tokens guardados.");
@@ -68,12 +68,20 @@ const Login = () => {
         const decodedToken = jwtDecode(accessToken);
         const currentTime = Date.now() / 1000;
         if (decodedToken.exp > currentTime) {
-          navigate("/");
+          try {
+            //const resToken = await tokenAPI.very_access_token(accessToken);
+            navigate("/");
+          } catch (e) {
+            console.log(e);
+          }
         }
       } catch (error) {
+        console.log(error);
         localStorage.removeItem("accessToken");
         Cookies.remove("refresh_token");
       }
+    } else {
+      console.log("no se eonctró token en storage");
     }
   };
 
@@ -98,7 +106,7 @@ const Login = () => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center", // Centra horizontalmente
+            justifyContent: "center",
           }}
         >
           <Box
@@ -113,7 +121,7 @@ const Login = () => {
           />
         </Box>
         <Typography variant="h4" align="center" gutterBottom>
-          Halach Bot ⚖️
+          Halach IA ⚖️
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField

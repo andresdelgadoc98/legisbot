@@ -3,7 +3,6 @@ import { Box, Button, Modal, TextField, Typography } from "@mui/material";
 import ChatAPI from "../../../Services/Controllers/Chats";
 import UsersAPI from "../../../Services/Controllers/Users";
 import { useNavigate } from "react-router-dom";
-const idUser = UsersAPI.getID();
 
 export default function ModalContext({
   selectedChatId,
@@ -18,6 +17,7 @@ export default function ModalContext({
   searchType,
   selectedValue,
 }) {
+  const idUser = UsersAPI.getID();
   const [localContext, setLocalContext] = useState(parentContext);
   const navigate = useNavigate();
   useEffect(() => {

@@ -4,9 +4,14 @@ import config from "../../config/config";
 
 const name = "documents";
 const documents = {};
+const accessToken = localStorage.getItem("accessToken");
+const headers = {
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${accessToken}`,
+};
 
-const getDocuments = async (id_reporte) => {
-  return await resolve(axios.get(`${config.BACKEND_URL}/${name}`));
+const getDocuments = async () => {
+  return await resolve(axios.get(`${config.BACKEND_URL}/${name}`), { headers });
 };
 
 documents.getDocuments = getDocuments;

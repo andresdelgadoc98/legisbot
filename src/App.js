@@ -8,22 +8,13 @@ import {
 } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { jwtDecode } from "jwt-decode";
-import Users from "./Services/Controllers/Users";
+import tokenAPI from "./Services/Controllers/token";
 import Cookies from "js-cookie";
-import { ThemeContext, ThemeProvider } from "../src/UI/components/ThemeContext"; // Importa el contexto
+import { ThemeContext, ThemeProvider } from "../src/UI/components/ThemeContext";
 
 const renewAccessToken = async () => {
   try {
-    const refreshToken = Cookies.get("refresh_token");
-    console.log("Refresh token:", refreshToken);
-
-    if (!refreshToken) {
-      throw new Error("No hay refresh token");
-    }
-
-    const res = await Users.getrefreshToken(refreshToken);
-    console.log("Respuesta del servidor:", res); // Depuración
-
+    const res = await tokenAPI.getAccessToken();
     if (res.data && res.data.access_token) {
       return res.data.access_token;
     } else {
@@ -51,10 +42,12 @@ const ProtectedRoute = ({ children }) => {
             setIsValidToken(true);
           } else {
             const newAccessToken = await renewAccessToken();
+            console.log({ newAccessToken });
             localStorage.setItem("accessToken", newAccessToken);
             setIsValidToken(true);
           }
         } catch (error) {
+          console.log(error);
           localStorage.removeItem("accessToken");
           Cookies.remove("refresh_token");
           navigate("/login");
