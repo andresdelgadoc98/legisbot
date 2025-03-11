@@ -50,10 +50,10 @@ const getInfo = async (idUser) => {
 };
 
 const logut = async (idUser) => {
-  //localStorage.removeItem("accessToken");
-  //Cookies.remove("refresh_token");
+  localStorage.removeItem("accessToken");
+  Cookies.remove("refresh_token");
   console.log("token removes");
-  //window.location.reload();
+  window.location.reload();
   return true;
 };
 
