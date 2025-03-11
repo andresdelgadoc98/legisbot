@@ -45,7 +45,7 @@ const Login = () => {
           Cookies.set("refresh_token", res.data.refresh_token, {
             httponly: false,
             secure: false,
-            samesite: "lax",
+            samesite: "none",
             expires: 1,
           });
 
@@ -77,8 +77,7 @@ const Login = () => {
         }
       } catch (error) {
         console.log(error);
-        localStorage.removeItem("accessToken");
-        Cookies.remove("refresh_token");
+        Users.logut();
       }
     } else {
       console.log("no se eonctró token en storage");

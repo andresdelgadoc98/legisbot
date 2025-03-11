@@ -6,24 +6,24 @@ import Cookies from "js-cookie";
 
 const name = "users";
 const users = {};
-const accessToken = localStorage.getItem("accessToken");
-
-const headers = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${accessToken}`,
-};
 
 const login = async (email, password) => {
   return await resolve(
-    axios.post(`${config.BACKEND_URL}/${name}/login`, {
-      email,
-      password,
-    })
+    axios.post(
+      `${config.BACKEND_URL}/${name}/login`,
+      { email, password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
   );
 };
 
 const getID = () => {
   try {
+    const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
       console.error("No se encontró el token de acceso");
       return null;
@@ -44,8 +44,15 @@ const getID = () => {
 };
 
 const getInfo = async (idUser) => {
+  const accessToken = localStorage.getItem("accessToken");
+
   return await resolve(
-    axios.get(`${config.BACKEND_URL}/${name}/${idUser}`, { headers })
+    axios.get(`${config.BACKEND_URL}/${name}/${idUser}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
   );
 };
 

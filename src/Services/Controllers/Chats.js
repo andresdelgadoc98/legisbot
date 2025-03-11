@@ -5,71 +5,90 @@ import config from "../../config/config";
 const name = "chats";
 const chats = {};
 
-const accessToken = localStorage.getItem("accessToken");
-
-const headers = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${accessToken}`,
-};
-
 const getChats = async (id_user) => {
-  return await resolve(
-    axios.get(`${config.BACKEND_URL}/${name}/${id_user}`, { headers })
-  );
+  const accessToken = localStorage.getItem("accessToken");
+  const promise = axios.get(`${config.BACKEND_URL}/chats/${id_user}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return await resolve(promise);
 };
 
 const createChat = async (id_user, titulo) => {
+  const accessToken = localStorage.getItem("accessToken");
   return await resolve(
     axios.post(
       `${config.BACKEND_URL}/${name}`,
       { titulo, id_user },
       {
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     )
   );
 };
 
 const getMessages = async (id_user, id_chat) => {
+  const accessToken = localStorage.getItem("accessToken");
   return await resolve(
     axios.get(
       `${config.BACKEND_URL}/${name}/obtener_contenido_chat?chat_id=${id_chat}&usuario_id=${id_user}`,
       {
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     )
   );
 };
 
 const deleteChat = async (id_chat) => {
+  const accessToken = localStorage.getItem("accessToken");
   return await resolve(
     axios.delete(`${config.BACKEND_URL}/${name}/${id_chat}`, {
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
     })
   );
 };
 
 const updateContexto = async (id_chat, contexto) => {
+  const accessToken = localStorage.getItem("accessToken");
   return await resolve(
     axios.put(
       `${config.BACKEND_URL}/${name}/${id_chat}/contexto`,
       { contexto },
       {
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     )
   );
 };
 
 const getContext = async (id_chat) => {
+  const accessToken = localStorage.getItem("accessToken");
   return await resolve(
     axios.get(`${config.BACKEND_URL}/${name}/${id_chat}/contexto`, {
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
     })
   );
 };
 
 const putPreferences = async (id_chat, searchType, document) => {
+  const accessToken = localStorage.getItem("accessToken");
   return await resolve(
     axios.put(
       `${config.BACKEND_URL}/${name}/${id_chat}/preferencia`,
@@ -80,7 +99,10 @@ const putPreferences = async (id_chat, searchType, document) => {
         },
       },
       {
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     )
   );

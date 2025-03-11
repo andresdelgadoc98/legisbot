@@ -4,16 +4,18 @@ import config from "../../config/config";
 
 const name = "documents";
 const documents = {};
-const accessToken = localStorage.getItem("accessToken");
-const headers = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${accessToken}`,
-};
 
 const getDocuments = async () => {
-  return await resolve(axios.get(`${config.BACKEND_URL}/${name}`), {
-    headers,
-  });
+  const accessToken = localStorage.getItem("accessToken");
+
+  return await resolve(
+    axios.get(`${config.BACKEND_URL}/${name}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+  );
 };
 
 documents.getDocuments = getDocuments;

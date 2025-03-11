@@ -9,13 +9,12 @@ import {
 import CssBaseline from "@mui/material/CssBaseline";
 import { jwtDecode } from "jwt-decode";
 import tokenAPI from "./Services/Controllers/token";
-import Cookies from "js-cookie";
 import { ThemeContext, ThemeProvider } from "../src/UI/components/ThemeContext";
+import UsersAPI from "./Services/Controllers/Users";
 
 const renewAccessToken = async () => {
   try {
     const res = await tokenAPI.getAccessToken();
-    console.log({ res });
     if (res.data && res.data.access_token) {
       return res.data.access_token;
     } else {
@@ -49,9 +48,7 @@ const ProtectedRoute = ({ children }) => {
           }
         } catch (error) {
           console.log(error);
-          localStorage.removeItem("accessToken");
-          Cookies.remove("refresh_token");
-          navigate("/login");
+          //UsersAPI.logut();
         }
       } else {
         navigate("/login");

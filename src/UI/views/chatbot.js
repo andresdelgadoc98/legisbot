@@ -100,10 +100,8 @@ const Chat = () => {
           setSelectedChatId(chatIdFromUrl);
           setMessages(response.data.contenido);
         } else {
-          navigate("/");
         }
       } else {
-        navigate("/");
       }
     }
     fetchData();
