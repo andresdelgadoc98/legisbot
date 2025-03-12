@@ -15,6 +15,7 @@ import {
 
 import { ThemeContext } from "../ThemeContext";
 import UsersAPI from "../../../Services/Controllers/Users";
+
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
@@ -65,12 +66,21 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
     const logut = UsersAPI.logut();
   };
 
+  // Función para verificar si la licencia está expirada
+  const isLicenciaExpirada = (fechaFin) => {
+    const fechaActual = new Date();
+    const fechaFinLicencia = new Date(fechaFin);
+    return fechaActual > fechaFinLicencia;
+  };
+
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box sx={style}>
         <Tabs value={tabValue} onChange={handleTabChange}>
           <Tab label="Perfil" {...a11yProps(0)} />
           <Tab label="Configuración" {...a11yProps(1)} />
+          <Tab label="Licencia" {...a11yProps(2)} />{" "}
+          {/* Nueva pestaña de Licencia */}
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
@@ -128,6 +138,53 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
               <MenuItem value="pink">Rosa</MenuItem>
             </Select>
           </FormControl>
+        </TabPanel>
+
+        {/* Nueva pestaña de Licencia */}
+        <TabPanel value={tabValue} index={2}>
+          <Typography variant="h6" gutterBottom>
+            Licencia
+          </Typography>
+          <TextField
+            fullWidth
+            label="Nombre de la Licencia"
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+            defaultValue={dataUser.licencia_nombre || "No tiene licencia"}
+          />
+          <TextField
+            fullWidth
+            label="Estado de la Licencia"
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+            defaultValue={
+              dataUser.licencia_fecha_fin
+                ? isLicenciaExpirada(dataUser.licencia_fecha_fin)
+                  ? "Expirada"
+                  : "Activa"
+                : "No tiene licencia"
+            }
+          />
+          <TextField
+            fullWidth
+            label="Fecha de Expiración"
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+            defaultValue={
+              dataUser.licencia_fecha_fin
+                ? new Date(dataUser.licencia_fecha_fin).toLocaleDateString()
+                : "No tiene licencia"
+            }
+          />
         </TabPanel>
       </Box>
     </Modal>

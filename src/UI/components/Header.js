@@ -55,39 +55,11 @@ export default function Header({
 
         <Box
           sx={{
-            flex: 1, // Ocupa el espacio restante
+            flex: 1,
             display: "flex",
-            justifyContent: "center", // Centra el contenido horizontalmente
-            marginLeft: 25, // Añade un margen a la izquierda
+            justifyContent: "center",
           }}
-        >
-          {isEditing ? (
-            <TextField
-              value={tempTitle}
-              autoFocus
-              fullWidth
-              sx={{
-                textAlign: "center",
-                display: { xs: "none", md: "block" },
-              }}
-            />
-          ) : (
-            <Typography
-              variant="h7"
-              sx={{
-                textAlign: "center",
-                cursor: "pointer",
-                fontWeight: 700,
-                display: { xs: "none", md: "block" },
-              }}
-            >
-              {selectedChatId
-                ? savedChats.find((chat) => chat.id === selectedChatId)
-                    ?.titulo || "¡Bienvenido!"
-                : "¡Bienvenido!"}
-            </Typography>
-          )}
-        </Box>
+        ></Box>
         <Box display="flex" alignItems="center">
           <FormControl variant="outlined" sx={{ ml: 2 }}>
             <SearchTypeButton searchType={searchType} name_file={name_file} />

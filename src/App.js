@@ -48,7 +48,7 @@ const ProtectedRoute = ({ children }) => {
           }
         } catch (error) {
           console.log(error);
-          //UsersAPI.logut();
+          UsersAPI.logut();
         }
       } else {
         navigate("/login");

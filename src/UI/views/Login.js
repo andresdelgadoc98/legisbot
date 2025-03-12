@@ -6,6 +6,8 @@ import {
   Button,
   Container,
   Paper,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import Users from "../../Services/Controllers/Users";
 import Cookies from "js-cookie";
@@ -19,6 +21,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Mensaje de error general
+  const [openSnackbar, setOpenSnackbar] = useState(false); // Controlar la visibilidad del Snac
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -37,9 +41,10 @@ const Login = () => {
     }
 
     if (email.includes("@") && password.length >= 6) {
+      let res;
       try {
         console.log("Iniciando sesión con:", { email, password });
-        const res = await Users.login(email, password);
+        let res = await Users.login(email, password);
         if (res.data && res.data.access_token && res.data.refresh_token) {
           localStorage.setItem("accessToken", res.data.access_token);
           Cookies.set("refresh_token", res.data.refresh_token, {
@@ -49,15 +54,20 @@ const Login = () => {
             expires: 1,
           });
 
-          console.log("Login exitoso. Tokens guardados.");
           window.location.href = "/";
         } else {
-          console.error("Error: No se recibieron tokens del servidor");
+          setErrorMessage(res.error.response.data.error);
+          setOpenSnackbar(true);
         }
       } catch (error) {
+        setErrorMessage(error.response.data.error);
+        setOpenSnackbar(true);
         console.error("Error durante el login:", error);
       }
     }
+  };
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   const checkToken = async () => {
@@ -168,6 +178,21 @@ const Login = () => {
           </Button>
         </Box>
       </Paper>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "center", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
