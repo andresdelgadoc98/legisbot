@@ -51,7 +51,7 @@ const Login = () => {
             httponly: false,
             secure: false,
             samesite: "none",
-            expires: 1,
+            expires: 7,
           });
 
           window.location.href = "/";
