@@ -107,18 +107,20 @@ const Chat = () => {
         if (chatIdFromUrl) {
           const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
           const folder = response.data.preferencia.document;
-          const nameFile =
-            documentsList.find((doc) => doc.folder === folder)?.file || null;
-
-          setname_file(nameFile);
           setsearchType(response.data.preferencia.searchType);
           setJurisdicciónSelected(
             response.data.preferencia.jurisdiccionSelected
           );
           setSelectedValue(response.data.preferencia.document);
+
           const response2 = await DocumentApi.getDocuments(
             response.data.preferencia.jurisdiccionSelected.folder
           );
+
+          const nameFile =
+            response2.data.find((doc) => doc.folder === folder)?.file || null;
+          setname_file(nameFile);
+          console.log({ nameFile });
           setdocumentsList(response2.data);
 
           if (response.data) {
@@ -129,7 +131,8 @@ const Chat = () => {
         } else {
         }
       } catch (e) {
-        navigate("/");
+        console.log({ e });
+        //navigate("/");
       }
     }
     fetchData();
