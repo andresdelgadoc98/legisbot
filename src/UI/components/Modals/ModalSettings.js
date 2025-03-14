@@ -48,7 +48,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 300,
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
@@ -80,7 +80,6 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
           <Tab label="Perfil" {...a11yProps(0)} />
           <Tab label="Configuración" {...a11yProps(1)} />
           <Tab label="Licencia" {...a11yProps(2)} />{" "}
-          {/* Nueva pestaña de Licencia */}
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>

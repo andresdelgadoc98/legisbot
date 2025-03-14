@@ -31,16 +31,16 @@ const ModalSearch = ({
   ]);
 
   useEffect(() => {
-    console.log({ selectedValue });
-    if (selectedType === "documentos") {
-      console.log({ documentsList });
-      const selectedDocument = documentsList.find(
-        (doc) => doc.folder === selectedValue
-      );
-      console.log({ selectedDocument });
-      setSelectedOption(selectedDocument || null);
-    } else {
-      setSelectedOption(null);
+    if (selectedValue != null) {
+      if (selectedType === "documentos") {
+        const selectedDocument = documentsList.find(
+          (doc) => doc.folder === selectedValue
+        );
+        console.log({ selectedDocument });
+        setSelectedOption(selectedDocument || null);
+      } else {
+        setSelectedOption(null);
+      }
     }
   }, [selectedValue, documentsList]);
 
@@ -51,8 +51,8 @@ const ModalSearch = ({
   };
 
   const handleOptionChangeJurisdiccion = (event, newValue) => {
-    if (!newValue) {
-      setJurisdiccion(null);
+    if (newValue == null) {
+      setSelectedOption(null);
       setJurisdicciónSelected(null);
       return;
     }
@@ -60,6 +60,7 @@ const ModalSearch = ({
     const selectedJurisdiccion = JurisdiccionList.find(
       (item) => item.folder === newValue.folder
     );
+    console.log({ selectedJurisdiccion });
     setJurisdiccion(selectedJurisdiccion.folder);
     setJurisdicciónSelected(selectedJurisdiccion);
     setSelectedOption(null);
@@ -94,6 +95,7 @@ const ModalSearch = ({
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
+          width: 300,
         }}
       >
         <Typography variant="h6" component="h2" gutterBottom>
