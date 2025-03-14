@@ -87,7 +87,12 @@ const getContext = async (id_chat) => {
   );
 };
 
-const putPreferences = async (id_chat, searchType, document) => {
+const putPreferences = async (
+  id_chat,
+  searchType,
+  document,
+  jurisdiccionSelected
+) => {
   const accessToken = localStorage.getItem("accessToken");
   return await resolve(
     axios.put(
@@ -96,6 +101,7 @@ const putPreferences = async (id_chat, searchType, document) => {
         preferencia: {
           searchType,
           document,
+          jurisdiccionSelected,
         },
       },
       {

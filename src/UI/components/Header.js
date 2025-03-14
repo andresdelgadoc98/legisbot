@@ -23,8 +23,8 @@ export default function Header({
   savedChats,
   selectedChatId,
 }) {
-  const [isEditing, setIsEditing] = useState(false); // Estado para modo de edición
-  const [tempTitle, setTempTitle] = useState(""); // Estado para el título temporal
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempTitle, setTempTitle] = useState("");
 
   return (
     <Box

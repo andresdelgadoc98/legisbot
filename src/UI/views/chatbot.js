@@ -26,7 +26,6 @@ const Chat = () => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
   const [searchType, setsearchType] = useState(null);
-  const [documentsList, setdocumentsList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [savedChats, setSavedChats] = useState([]);
@@ -40,22 +39,26 @@ const Chat = () => {
     nombre: "",
     email: "",
   });
+  const [documentsList, setdocumentsList] = useState([]);
+  const [jurisdiccion, setJurisdiccion] = useState("federal");
+  const [jurisdiccionSelected, setJurisdicciónSelected] = useState({
+    name: "Federal",
+    folder: "federal",
+  });
+
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await DocumentApi.getDocuments();
         const response2 = await ChatAPI.getChats(idUser);
-
         const response3 = await UsersAPI.getInfo(idUser);
 
         if (!response2.error) {
           setSavedChats(response2.data);
           setdataUser(response3.data);
         }
-        setdocumentsList(response.data);
       } catch (e) {
         console.log({ e });
       }
@@ -63,6 +66,19 @@ const Chat = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await DocumentApi.getDocuments(jurisdiccion);
+        setdocumentsList(response.data);
+      } catch (e) {
+        console.log({ e });
+      }
+    }
+
+    fetchData();
+  }, [jurisdiccion]);
 
   useEffect(() => {
     async function fetchData() {
@@ -83,30 +99,42 @@ const Chat = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const searchParams = new URLSearchParams(location.search);
-      const chatIdFromUrl = searchParams.get("chatId");
+      try {
+        const searchParams = new URLSearchParams(location.search);
+        const chatIdFromUrl = searchParams.get("chatId");
 
-      if (chatIdFromUrl && documentsList.length > 0) {
-        const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
-        const folder = response.data.preferencia.document;
-        const nameFile =
-          documentsList.find((doc) => doc.folder === folder)?.file || null;
+        //if (chatIdFromUrl && documentsList.length > 0) {
+        if (chatIdFromUrl) {
+          const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
+          const folder = response.data.preferencia.document;
+          const nameFile =
+            documentsList.find((doc) => doc.folder === folder)?.file || null;
 
-        setname_file(nameFile);
-        setsearchType(response.data.preferencia.searchType);
-        setSelectedValue(response.data.preferencia.document);
+          setname_file(nameFile);
+          setsearchType(response.data.preferencia.searchType);
+          setJurisdicciónSelected(
+            response.data.preferencia.jurisdiccionSelected
+          );
+          setSelectedValue(response.data.preferencia.document);
+          const response2 = await DocumentApi.getDocuments(
+            response.data.preferencia.jurisdiccionSelected.folder
+          );
+          setdocumentsList(response2.data);
 
-        if (response.data) {
-          setSelectedChatId(chatIdFromUrl);
-          setMessages(response.data.contenido);
+          if (response.data) {
+            setSelectedChatId(chatIdFromUrl);
+            setMessages(response.data.contenido);
+          } else {
+          }
         } else {
         }
-      } else {
+      } catch (e) {
+        navigate("/");
       }
     }
     fetchData();
-  }, [documentsList]);
-
+  }, []);
+  //  }, [documentsList]);
   useEffect(() => {
     const handleResponse = (data) => {
       setMessages((prev) => {
@@ -155,7 +183,8 @@ const Chat = () => {
         await ChatAPI.putPreferences(
           result.data.chat_id,
           searchType,
-          selectedValue
+          selectedValue,
+          jurisdiccionSelected
         );
 
         setSavedChats(response2.data);
@@ -215,11 +244,15 @@ const Chat = () => {
 
   const handleChatSelection = async (chatId) => {
     const response = await ChatAPI.getMessages(idUser, chatId);
-
-    setsearchType(response.data.preferencia.searchType);
     setSelectedChatId(chatId);
     setMessages(response.data.contenido);
+    setsearchType(response.data.preferencia.searchType);
     setSelectedValue(response.data.preferencia.document);
+    setJurisdicciónSelected(response.data.preferencia.jurisdiccionSelected);
+    const response2 = await DocumentApi.getDocuments(
+      response.data.preferencia.jurisdiccionSelected.folder
+    );
+    setdocumentsList(response2.data);
     const searchParams = new URLSearchParams();
     searchParams.set("chatId", chatId);
     navigate({ search: searchParams.toString() });
@@ -229,7 +262,12 @@ const Chat = () => {
     if (type === "jurisprudencias") {
       setsearchType(type);
       if (selectedChatId !== null) {
-        await ChatAPI.putPreferences(selectedChatId, type, null);
+        await ChatAPI.putPreferences(
+          selectedChatId,
+          type,
+          null,
+          jurisdiccionSelected
+        );
       }
 
       return;
@@ -240,7 +278,12 @@ const Chat = () => {
       setSelectedValue(option);
       setname_file(documentsList.find((doc) => doc.folder === option)["file"]);
       if (selectedChatId !== null) {
-        await ChatAPI.putPreferences(selectedChatId, type, option);
+        await ChatAPI.putPreferences(
+          selectedChatId,
+          type,
+          option,
+          jurisdiccionSelected
+        );
       }
       return;
     }
@@ -249,7 +292,12 @@ const Chat = () => {
       setsearchType(null);
       setSelectedValue("");
       if (selectedChatId !== null) {
-        await ChatAPI.putPreferences(selectedChatId, null, "");
+        await ChatAPI.putPreferences(
+          selectedChatId,
+          null,
+          "",
+          jurisdiccionSelected
+        );
       }
     }
   };
@@ -398,6 +446,10 @@ const Chat = () => {
         selectedType={searchType}
         setSelectedType={setsearchType}
         selectedValue={selectedValue}
+        setJurisdiccion={setJurisdiccion}
+        jurisdiccion={jurisdiccion}
+        jurisdiccionSelected={jurisdiccionSelected}
+        setJurisdicciónSelected={setJurisdicciónSelected}
       />
       <ModalSettings
         isOpen={isProfileModalOpen}

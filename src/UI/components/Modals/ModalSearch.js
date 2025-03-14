@@ -3,14 +3,13 @@ import {
   Modal,
   Box,
   Typography,
-  Select,
-  MenuItem,
-  Button,
   FormControl,
-  InputLabel,
   RadioGroup,
   FormControlLabel,
   Radio,
+  Autocomplete,
+  TextField,
+  Button,
 } from "@mui/material";
 
 const ModalSearch = ({
@@ -18,35 +17,67 @@ const ModalSearch = ({
   onClose,
   onConfirm,
   documentsList,
-  selectedType: initialSelectedType,
+  selectedType,
+  setSelectedType,
   selectedValue,
+  setJurisdiccion,
+  setJurisdicciónSelected,
+  jurisdiccionSelected,
 }) => {
-  const [selectedType, setSelectedType] = useState(initialSelectedType);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState();
+  const [JurisdiccionList, setJurisdicciónList] = useState([
+    { name: "Federal", folder: "federal" },
+    { name: "Tamaulipas", folder: "tamaulipas" },
+  ]);
 
   useEffect(() => {
-    setSelectedType(initialSelectedType);
-    setSelectedOption(selectedValue);
-  }, [initialSelectedType, selectedValue]);
+    console.log({ selectedValue });
+    if (selectedType === "documentos") {
+      console.log({ documentsList });
+      const selectedDocument = documentsList.find(
+        (doc) => doc.folder === selectedValue
+      );
+      console.log({ selectedDocument });
+      setSelectedOption(selectedDocument || null);
+    } else {
+      setSelectedOption(null);
+    }
+  }, [selectedValue, documentsList]);
 
   const handleTypeChange = (event) => {
-    setSelectedType(event.target.value);
-    setSelectedOption("");
+    const newType = event.target.value;
+    setSelectedType(newType);
+    setSelectedOption(null);
   };
 
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
+  const handleOptionChangeJurisdiccion = (event, newValue) => {
+    if (!newValue) {
+      setJurisdiccion(null);
+      setJurisdicciónSelected(null);
+      return;
+    }
+
+    const selectedJurisdiccion = JurisdiccionList.find(
+      (item) => item.folder === newValue.folder
+    );
+    setJurisdiccion(selectedJurisdiccion.folder);
+    setJurisdicciónSelected(selectedJurisdiccion);
+    setSelectedOption(null);
+  };
+
+  const handleOptionChange = (event, newValue) => {
+    setSelectedOption(newValue);
   };
 
   const handleConfirm = () => {
-    if (selectedType === "documentos" && selectedOption === "") {
+    if (selectedType === "documentos" && !selectedOption) {
       alert("Por favor, selecciona un documento.");
       return;
     }
 
     onConfirm(
       selectedType,
-      selectedType === "jurisprudencias" ? "" : selectedOption
+      selectedType === "documentos" ? selectedOption?.folder : ""
     );
     onClose();
   };
@@ -90,21 +121,41 @@ const ModalSearch = ({
         </FormControl>
 
         {selectedType === "documentos" && (
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel id="select-label">Documento</InputLabel>
-            <Select
-              labelId="select-label"
-              value={selectedOption}
-              onChange={handleOptionChange}
-              label="Documento"
-            >
-              {documentsList.map((item, index) => (
-                <MenuItem key={index} value={item.folder}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <>
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <Autocomplete
+                options={JurisdiccionList}
+                getOptionLabel={(option) => option.name}
+                value={jurisdiccionSelected}
+                onChange={handleOptionChangeJurisdiccion}
+                isOptionEqualToValue={(option, value) =>
+                  option.name === value.name
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Jurisdicción"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </FormControl>
+
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <Autocomplete
+                options={documentsList}
+                getOptionLabel={(option) => option.name}
+                value={selectedOption}
+                onChange={handleOptionChange}
+                isOptionEqualToValue={(option, value) =>
+                  option.name === value.name
+                }
+                renderInput={(params) => (
+                  <TextField {...params} label="Leyes" variant="outlined" />
+                )}
+              />
+            </FormControl>
+          </>
         )}
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>

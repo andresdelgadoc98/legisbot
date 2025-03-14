@@ -21,8 +21,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); // Mensaje de error general
-  const [openSnackbar, setOpenSnackbar] = useState(false); // Controlar la visibilidad del Snac
+  const [errorMessage, setErrorMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -84,10 +84,15 @@ const Login = () => {
           } catch (e) {
             console.log(e);
           }
+        } else {
+          const res = await tokenAPI.getAccessToken();
+          console.log({ res });
+          localStorage.setItem("accessToken", res.data.access_token);
+          navigate("/");
         }
       } catch (error) {
         console.log(error);
-        Users.logut();
+        //Users.logut();
       }
     } else {
       console.log("no se eonctró token en storage");

@@ -7,7 +7,7 @@ import { Button } from "@mui/material";
 export default function SearchTypeButton({ searchType, name_file }) {
   const url =
     searchType === "documentos"
-      ? config.BACKEND_URL + "/documents/documentos/" + name_file
+      ? name_file
       : searchType === "jurisprudencias"
       ? "https://sjf2.scjn.gob.mx/busqueda-principal-tesis"
       : "#";
