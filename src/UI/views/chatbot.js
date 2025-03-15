@@ -112,15 +112,12 @@ const Chat = () => {
             response.data.preferencia.jurisdiccionSelected
           );
           setSelectedValue(response.data.preferencia.document);
-
           const response2 = await DocumentApi.getDocuments(
             response.data.preferencia.jurisdiccionSelected.folder
           );
-
           const nameFile =
             response2.data.find((doc) => doc.folder === folder)?.file || null;
           setname_file(nameFile);
-          console.log({ nameFile });
           setdocumentsList(response2.data);
 
           if (response.data) {
@@ -182,25 +179,12 @@ const Chat = () => {
           idUser,
           currentMessage.substring(0, 45)
         );
-        const response2 = await ChatAPI.getChats(idUser);
-        await ChatAPI.putPreferences(
-          result.data.chat_id,
-          searchType,
-          selectedValue,
-          jurisdiccionSelected
-        );
 
-        setSavedChats(response2.data);
-        setSelectedChatId(result.data.chat_id);
         setMessages((prev) => [
           ...prev,
           { text: currentMessage, sender: "user" },
         ]);
         setCurrentMessage("");
-
-        const searchParams = new URLSearchParams();
-        searchParams.set("chatId", result.data.chat_id);
-        navigate({ search: searchParams.toString() });
 
         socket.emit(
           "message",
@@ -212,6 +196,19 @@ const Chat = () => {
             searchType: searchType,
           })
         );
+
+        const response2 = await ChatAPI.getChats(idUser);
+        setSavedChats(response2.data);
+        setSelectedChatId(result.data.chat_id);
+        await ChatAPI.putPreferences(
+          result.data.chat_id,
+          searchType,
+          selectedValue,
+          jurisdiccionSelected
+        );
+        const searchParams = new URLSearchParams();
+        searchParams.set("chatId", result.data.chat_id);
+        navigate({ search: searchParams.toString() });
         setIsBotResponding(true);
       } else {
         setMessages((prev) => [
