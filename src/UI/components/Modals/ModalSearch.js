@@ -51,9 +51,11 @@ const ModalSearch = ({
   };
 
   const handleOptionChangeJurisdiccion = (event, newValue) => {
+    console.log({ newValue });
     if (newValue == null) {
       setSelectedOption(null);
       setJurisdicciónSelected(null);
+      setJurisdiccion(null);
       return;
     }
 

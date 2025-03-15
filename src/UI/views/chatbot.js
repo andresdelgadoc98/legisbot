@@ -70,8 +70,13 @@ const Chat = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await DocumentApi.getDocuments(jurisdiccion);
-        setdocumentsList(response.data);
+        console.log({ jurisdiccion });
+        if (jurisdiccion !== null) {
+          const response = await DocumentApi.getDocuments(jurisdiccion);
+          setdocumentsList(response.data);
+        } else {
+          setdocumentsList([]);
+        }
       } catch (e) {
         console.log({ e });
       }
