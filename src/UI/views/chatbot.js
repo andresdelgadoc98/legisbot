@@ -244,6 +244,7 @@ const Chat = () => {
 
   const handleChatSelection = async (chatId) => {
     const response = await ChatAPI.getMessages(idUser, chatId);
+    const folder = response.data.preferencia.document;
     setSelectedChatId(chatId);
     setMessages(response.data.contenido);
     setsearchType(response.data.preferencia.searchType);
@@ -253,6 +254,10 @@ const Chat = () => {
       response.data.preferencia.jurisdiccionSelected.folder
     );
     setdocumentsList(response2.data);
+    const nameFile =
+      response2.data.find((doc) => doc.folder === folder)?.file || null;
+    setname_file(nameFile);
+
     const searchParams = new URLSearchParams();
     searchParams.set("chatId", chatId);
     navigate({ search: searchParams.toString() });
