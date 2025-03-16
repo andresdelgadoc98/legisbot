@@ -44,7 +44,7 @@ export default function MessageContainer({ messages }) {
                 paddingLeft: "10px",
                 paddingRight: "10px",
                 borderRadius: "16px",
-                maxWidth: "70%",
+                maxWidth: "100%",
               }}
             >
               <ReactMarkdown

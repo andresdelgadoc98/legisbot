@@ -97,7 +97,7 @@ const ModalSearch = ({
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
-          width: 300,
+          width: 400,
         }}
       >
         <Typography variant="h6" component="h2" gutterBottom>

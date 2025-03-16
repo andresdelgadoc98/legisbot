@@ -326,35 +326,32 @@ const Chat = () => {
 
   return (
     <div>
-      <Header
-        toggleDrawer={toggleDrawer}
-        searchType={searchType}
-        name_file={name_file}
-        setModalOpen={setModalOpen}
-        handleOpenContextModal={handleOpenContextModal}
-        handleOpenModal={handleOpenModal}
-        savedChats={savedChats}
-        selectedChatId={selectedChatId}
-      />
-
       <Box
         sx={{
           position: "relative",
           height: "100dvh",
           width: "100%",
           fontFamily: "'Roboto', sans-serif",
-          overflow: "hidden",
         }}
       >
+        <Header
+          toggleDrawer={toggleDrawer}
+          searchType={searchType}
+          name_file={name_file}
+          setModalOpen={setModalOpen}
+          handleOpenContextModal={handleOpenContextModal}
+          handleOpenModal={handleOpenModal}
+          savedChats={savedChats}
+          selectedChatId={selectedChatId}
+        />
         <Box
           sx={{
             position: "absolute",
             top: "4rem",
-            bottom: "64px",
+            bottom: "74px",
             left: 0,
             right: 0,
             overflowY: "auto",
-            p: 2,
           }}
         >
           {messages.length === 0 ? (
@@ -402,8 +399,9 @@ const Chat = () => {
         <Box
           sx={{
             position: "fixed",
-            bottom: 0,
-            left: 0,
+            bottom: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
             width: "100%",
             height: "64px",
             boxShadow: "0px -2px 4px rgba(0,0,0,0.1)",
@@ -418,6 +416,7 @@ const Chat = () => {
             searchType={searchType}
             name_file={name_file}
             isBotResponding={isBotResponding}
+            sx={{ overflow: "hidden" }}
           />
         </Box>
       </Box>

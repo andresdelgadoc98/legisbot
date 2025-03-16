@@ -21,7 +21,7 @@ export default function SearchTypeButton({ searchType, name_file }) {
 
   return (
     <div>
-      {searchType === null ? (
+      {searchType === null || searchType === "general" ? (
         <div></div>
       ) : (
         <Button
