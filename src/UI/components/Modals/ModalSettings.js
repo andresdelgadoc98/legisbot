@@ -16,7 +16,7 @@ import {
 import { ThemeContext } from "../ThemeContext";
 import UsersAPI from "../../../Services/Controllers/Users";
 import { ToastContainer, Zoom } from "react-toastify";
-import Notification from "../Notification";
+//import Notification from "../Notification";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -200,7 +200,7 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
             transition={Zoom}
             closeButton={false}
           />
-          <Notification />
+          {/*<Notification />*/}
         </TabPanel>
       </Box>
     </Modal>

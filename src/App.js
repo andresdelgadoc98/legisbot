@@ -107,7 +107,17 @@ function App() {
     pink: pinkTheme,
     light: lightTheme,
   };
+  const themeColors = {
+    dark: "#121212",
+    light: "#ffffff",
+    pink: "#e91e63", // O usa '#f06292' si prefieres chatUser
+  };
 
+  useEffect(() => {
+    document
+      .querySelector("meta[name='theme-color']")
+      .setAttribute("content", themeColors[theme] || "#121212"); // Fallback a #121212 si theme no está definido
+  }, [theme]); // Dependencia en theme para que se actualice cuando cambie
   return (
     <MuiThemeProvider theme={themes[theme] || darkTheme}>
       <CssBaseline />

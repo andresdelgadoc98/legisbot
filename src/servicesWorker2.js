@@ -1,8 +1,8 @@
 import { toast } from "react-toastify";
 import InfoIcon from "./UI/views/chatbot.png";
 
-const isLocalhost = Boolean(
-  window.location.hostname === "saturnodelgado.com" ||
+let isLocalhost = Boolean(
+  window.location.hostname === "localhost" ||
     // [::1] is the IPv6 localhost address.
     window.location.hostname === "[::1]" ||
     // 127.0.0.0/8 are considered localhost for IPv4.

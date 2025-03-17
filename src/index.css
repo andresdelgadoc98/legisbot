@@ -3,7 +3,21 @@ html, body {
     padding: 0;
     height: 100%;
     overflow: hidden; 
+  
+  } 
 
-
+  .left-sidebar {
+    padding: env(safe-area-inset-top) 0 0 env(safe-area-inset-left);
   }
+/*
+  html {
+    min-height: calc(100% + env(safe-area-inset-top)) !important;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    background-attachment: fixed;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: "green";
+  } */
 

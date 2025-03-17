@@ -3,12 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#121212" />
+    <!-- possible content values: default, black or black-translucent -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta
       name="description"
       content="Halach es un asistente  que utiliza Inteligencia Articial para analizar y extraer información clave de documentos legales y facilitar la búsqueda de jurisprudencia" 
     />
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover, width=device-width"></meta>
+
     <link
     href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
     rel="stylesheet"
@@ -28,6 +36,11 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/chatbot.png">
+    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/chatbot.png">
+    
+
     <title>Halach IA</title>
   </head>
 
@@ -36,6 +49,7 @@
     <div id="root"></div>
 
     <script>
+      /*
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
           navigator.serviceWorker.register('/worker.js').then(function (registration) {
@@ -49,26 +63,10 @@
         });
       } else {
         console.log('Service Worker is not supported by browser.');
-      }
+      }*/
       
     </script>
-        <script>
-          if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-              navigator.serviceWorker.register('/worker.js').then(function (registration) {
-    
-                console.log('Worker registration successful', registration.scope);
-              }, function (err) {
-                console.log('Worker registration failed', err);
-              }).catch(function (err) {
-                console.log(err);
-              });
-            });
-          } else {
-            console.log('Service Worker is not supported by browser.');
-          }
-          
-        </script>
+  
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
