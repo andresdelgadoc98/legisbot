@@ -15,6 +15,8 @@ import {
 
 import { ThemeContext } from "../ThemeContext";
 import UsersAPI from "../../../Services/Controllers/Users";
+import { ToastContainer, Zoom } from "react-toastify";
+import Notification from "../Notification";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -66,7 +68,6 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
     const logut = UsersAPI.logut();
   };
 
-  // Función para verificar si la licencia está expirada
   const isLicenciaExpirada = (fechaFin) => {
     const fechaActual = new Date();
     const fechaFinLicencia = new Date(fechaFin);
@@ -139,7 +140,6 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
           </FormControl>
         </TabPanel>
 
-        {/* Nueva pestaña de Licencia */}
         <TabPanel value={tabValue} index={2}>
           <Typography variant="h6" gutterBottom>
             Licencia
@@ -184,6 +184,23 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
                 : "No tiene licencia"
             }
           />
+          {localStorage.getItem("fcmToken") ? (
+            <div>{localStorage.getItem("fcmToken")}</div>
+          ) : null}{" "}
+          <ToastContainer
+            position="bottom-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={true}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            transition={Zoom}
+            closeButton={false}
+          />
+          <Notification />
         </TabPanel>
       </Box>
     </Modal>

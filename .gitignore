@@ -6,6 +6,8 @@
 .pnp.js
 /src/config/config.js
 .env
+/certs
+
 # testing
 /coverage
 
