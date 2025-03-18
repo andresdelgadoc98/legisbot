@@ -97,7 +97,7 @@ const ChatList = ({
           ) : (
             <ListItemButton onClick={(e) => handleChatSelection(chat.id, e)}>
               <ListItemText
-                primary={truncateText(chat.titulo, 32)}
+                primary={truncateText(chat.titulo, 45)}
                 primaryTypographyProps={{ fontSize: ".9rem" }}
               />
             </ListItemButton>
