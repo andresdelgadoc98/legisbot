@@ -67,7 +67,7 @@ export default function SideBar({
     <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
       <Box
         sx={{
-          width: 250,
+          width: 280,
           height: "100%",
           display: "flex",
           flexDirection: "column",
