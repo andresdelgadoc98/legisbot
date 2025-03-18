@@ -50,9 +50,11 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
+  maxHeight: "80vh",
   width: 400,
   bgcolor: "background.paper",
   boxShadow: 24,
+  overflowY: "auto",
   p: 4,
 };
 
@@ -75,7 +77,12 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose} sx={{ overflow: "hidden" }}>
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      sx={{ overflow: "hidden" }} // Evita scroll en el backdrop del Modal
+      disableScrollLock={false}
+    >
       <Box sx={style}>
         <Tabs value={tabValue} onChange={handleTabChange}>
           <Tab label="Perfil" {...a11yProps(0)} />

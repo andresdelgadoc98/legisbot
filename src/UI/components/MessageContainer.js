@@ -11,13 +11,15 @@ import {
 import { ContentCopy } from "@mui/icons-material";
 import remarkGfm from "remark-gfm";
 
-export default function MessageContainer({ messages }) {
+export default function MessageContainer({ messages, shouldScrollToEnd }) {
   const theme = useTheme();
   const messagesEndRef = useRef(null);
   const [hoveredMessageIndex, setHoveredMessageIndex] = useState(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (shouldScrollToEnd) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleCopyMessage = (text) => {

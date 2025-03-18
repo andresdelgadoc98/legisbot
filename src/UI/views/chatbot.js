@@ -45,7 +45,7 @@ const Chat = () => {
     name: "Federal",
     folder: "federal",
   });
-
+  const [shouldScrollToEnd, setShouldScrollToEnd] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -128,6 +128,7 @@ const Chat = () => {
           if (response.data) {
             setSelectedChatId(chatIdFromUrl);
             setMessages(response.data.contenido);
+            setShouldScrollToEnd(true);
           } else {
           }
         } else {
@@ -152,6 +153,7 @@ const Chat = () => {
         }
         return [...prev, { text: data, sender: "bot" }];
       });
+      setShouldScrollToEnd(true);
     };
 
     const handleResponseEnd = () => {
@@ -189,6 +191,7 @@ const Chat = () => {
           ...prev,
           { text: currentMessage, sender: "user" },
         ]);
+        setShouldScrollToEnd(true);
         setCurrentMessage("");
 
         socket.emit(
@@ -214,7 +217,6 @@ const Chat = () => {
         const searchParams = new URLSearchParams();
         searchParams.set("chatId", result.data.chat_id);
         navigate({ search: searchParams.toString() });
-        setIsBotResponding(true);
       } else {
         setMessages((prev) => [
           ...prev,
@@ -242,9 +244,10 @@ const Chat = () => {
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
     ) {
-      return;
+      return; // No cambiamos shouldScrollToEnd aquí, solo evitamos acción con Tab/Shift
     }
     setIsDrawerOpen(open);
+    setShouldScrollToEnd(!open); // Desactiva scroll al abrir, activa al cerrar
   };
 
   const handleChatSelection = async (chatId) => {
@@ -262,7 +265,7 @@ const Chat = () => {
     const nameFile =
       response2.data.find((doc) => doc.folder === folder)?.file || null;
     setname_file(nameFile);
-
+    setShouldScrollToEnd(true);
     const searchParams = new URLSearchParams();
     searchParams.set("chatId", chatId);
     navigate({ search: searchParams.toString() });
@@ -343,6 +346,7 @@ const Chat = () => {
           handleOpenModal={handleOpenModal}
           savedChats={savedChats}
           selectedChatId={selectedChatId}
+          setShouldScrollToEnd={setShouldScrollToEnd}
         />
         <Box
           sx={{
@@ -392,7 +396,10 @@ const Chat = () => {
               </Box>
             </Box>
           ) : (
-            <MessageContainer messages={messages} />
+            <MessageContainer
+              messages={messages}
+              shouldScrollToEnd={shouldScrollToEnd}
+            />
           )}
         </Box>
 
@@ -459,6 +466,7 @@ const Chat = () => {
         jurisdiccion={jurisdiccion}
         jurisdiccionSelected={jurisdiccionSelected}
         setJurisdicciónSelected={setJurisdicciónSelected}
+        setShouldScrollToEnd={setShouldScrollToEnd}
       />
       <ModalSettings
         isOpen={isProfileModalOpen}

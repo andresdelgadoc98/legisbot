@@ -3,14 +3,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BalanceIcon from "@mui/icons-material/Balance";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  Box,
-  FormControl,
-  IconButton,
-  Button,
-  Typography,
-  TextField,
-} from "@mui/material";
+import { Box, FormControl, IconButton, Button } from "@mui/material";
 import SearchTypeButton from "./SearchTypeButton";
 
 export default function Header({
@@ -20,12 +13,7 @@ export default function Header({
   setModalOpen,
   handleOpenContextModal,
   handleOpenModal,
-  savedChats,
-  selectedChatId,
 }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempTitle, setTempTitle] = useState("");
-
   return (
     <Box
       sx={{

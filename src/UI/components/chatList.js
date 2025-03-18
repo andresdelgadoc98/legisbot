@@ -41,7 +41,7 @@ const ChatList = ({
   const handleEditClick = (chatId, currentTitle) => {
     setEditingChatId(chatId);
     setEditedTitle(currentTitle);
-    setTimeout(() => inputRef.current?.focus(), 0); // Focus después de render
+    setTimeout(() => inputRef.current?.focus(), 0);
     handleMenuClose();
   };
 
