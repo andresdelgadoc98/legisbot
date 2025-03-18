@@ -60,20 +60,20 @@ export default function Header({
           }}
         ></Box>
         <Box display="flex" alignItems="center">
-          <FormControl variant="outlined" sx={{ ml: 2 }}>
+          <FormControl variant="outlined">
             <SearchTypeButton searchType={searchType} name_file={name_file} />
           </FormControl>
-          <FormControl variant="outlined" sx={{ ml: 2 }}>
+          <FormControl variant="outlined" sx={{ ml: 1 }}>
             <Button variant="contained" onClick={() => setModalOpen(true)}>
               <SearchIcon />
             </Button>
           </FormControl>
-          <FormControl variant="outlined" sx={{ ml: 2 }}>
+          <FormControl variant="outlined" sx={{ ml: 1 }}>
             <Button variant="contained" onClick={handleOpenContextModal}>
               <BalanceIcon />
             </Button>
           </FormControl>
-          <FormControl variant="outlined" sx={{ ml: 2 }}>
+          <FormControl variant="outlined" sx={{ ml: 1 }}>
             <Button variant="contained" onClick={handleOpenModal}>
               <AccountCircleIcon />
             </Button>

@@ -11,7 +11,7 @@ export async function resolve(promise, isTokenRefresh = false) {
     response = await promise;
     resolved.data = response.data;
   } catch (error) {
-    if (error.response.status === 403) {
+    if (error.response.status === 403 || error.response.status === 401) {
       console.log({ error });
       const refreshSuccess = await tokenAPI.getAccessToken();
 

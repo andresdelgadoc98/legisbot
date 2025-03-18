@@ -47,6 +47,22 @@ const getMessages = async (id_user, id_chat) => {
   );
 };
 
+const updateTitleChat = async (id_chat, titulo) => {
+  const accessToken = localStorage.getItem("accessToken");
+  return await resolve(
+    axios.put(
+      `${config.BACKEND_URL}/${name}/${id_chat}/title`,
+      { titulo },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+  );
+};
+
 const deleteChat = async (id_chat) => {
   const accessToken = localStorage.getItem("accessToken");
   return await resolve(
@@ -121,4 +137,5 @@ chats.deleteChat = deleteChat;
 chats.updateContexto = updateContexto;
 chats.getContext = getContext;
 chats.putPreferences = putPreferences;
+chats.updateTitleChat = updateTitleChat;
 export default chats;

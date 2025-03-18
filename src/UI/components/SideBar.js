@@ -27,11 +27,12 @@ export default function SideBar({
   };
   const navigate = useNavigate();
 
-  const handleDelete = (chatId) => {
+  const handleDelete = (chatId, event) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this chat?"
     );
     if (confirmDelete) {
+      toggleDrawer(false)(event);
       setSavedChats((prevChats) =>
         prevChats.filter((chat) => chat.id !== chatId)
       );
@@ -42,14 +43,24 @@ export default function SideBar({
     }
   };
 
-  const handleNewChat = () => {
+  const handleEdit = (chatId, newTitle) => {
+    if (newTitle) {
+      setSavedChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat.id === chatId ? { ...chat, titulo: newTitle } : chat
+        )
+      );
+    }
+  };
+  const handleNewChat = (e) => {
+    e.stopPropagation();
     console.log("Creando nuevo chat...");
-    navigate("/");
     setSelectedChatId(null);
     setMessages([]);
     setSelectedValue("");
     setsearchType(null);
-    toggleDrawer(false);
+    toggleDrawer(false)(e);
+    navigate("/");
   };
 
   return (
@@ -62,8 +73,6 @@ export default function SideBar({
           flexDirection: "column",
         }}
         role="presentation"
-        onClick={toggleDrawer(false)}
-        onKeyDown={toggleDrawer(false)}
       >
         <Box
           sx={{
@@ -95,6 +104,7 @@ export default function SideBar({
               handleChatSelection={handleChatSelection}
               handleRename={handleRename}
               handleDelete={handleDelete}
+              handleEdit={handleEdit}
             />
           </List>
         </Box>

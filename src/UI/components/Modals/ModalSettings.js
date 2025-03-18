@@ -75,7 +75,7 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
+    <Modal open={isOpen} onClose={onClose} sx={{ overflow: "hidden" }}>
       <Box sx={style}>
         <Tabs value={tabValue} onChange={handleTabChange}>
           <Tab label="Perfil" {...a11yProps(0)} />
