@@ -7,6 +7,7 @@ import {
   IconButton,
   ListItemSecondaryAction,
   TextField,
+  ListItem,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Chats from "../../Services/Controllers/Chats";
@@ -38,7 +39,8 @@ const ChatList = ({
     return text.length > limit ? `${text.substring(0, limit)}...` : text;
   };
 
-  const handleEditClick = (chatId, currentTitle) => {
+  const handleEditClick = (chatId, currentTitle, event) => {
+    event.stopPropagation();
     setEditingChatId(chatId);
     setEditedTitle(currentTitle);
     setTimeout(() => inputRef.current?.focus(), 0);
@@ -49,7 +51,7 @@ const ChatList = ({
     setEditedTitle(e.target.value);
   };
 
-  const handleBlur = async (chatId) => {
+  const handleBlur = async (chatId, e) => {
     if (
       editedTitle.trim() &&
       editedTitle !== savedChats.find((chat) => chat.id === chatId).titulo
@@ -58,7 +60,7 @@ const ChatList = ({
         const response = await Chats.updateTitleChat(chatId, editedTitle);
 
         if (response.data) {
-          handleEdit(chatId, editedTitle);
+          handleEdit(chatId, editedTitle, e);
         }
       } catch (error) {
         console.error("Error al guardar el título:", error);
@@ -77,10 +79,8 @@ const ChatList = ({
   return (
     <>
       {savedChats.map((chat) => (
-        <ListItemButton
-          key={chat.id}
-          onClick={(e) => handleChatSelection(chat.id, e)}
-        >
+        <ListItem key={chat.id} disablePadding>
+          {/* El ListItemButton solo envuelve el ListItemText para selección */}
           {editingChatId === chat.id ? (
             <TextField
               value={editedTitle}
@@ -92,12 +92,15 @@ const ChatList = ({
               fullWidth
               sx={{ maxWidth: "200px" }}
               inputProps={{ maxLength: 45 }}
+              onClick={(e) => e.stopPropagation()} // Detiene clic en TextField
             />
           ) : (
-            <ListItemText
-              primary={truncateText(chat.titulo, 32)}
-              primaryTypographyProps={{ fontSize: ".85rem" }}
-            />
+            <ListItemButton onClick={(e) => handleChatSelection(chat.id, e)}>
+              <ListItemText
+                primary={truncateText(chat.titulo, 32)}
+                primaryTypographyProps={{ fontSize: ".9rem" }}
+              />
+            </ListItemButton>
           )}
           <ListItemSecondaryAction>
             <IconButton
@@ -108,7 +111,7 @@ const ChatList = ({
               <MoreVertIcon />
             </IconButton>
           </ListItemSecondaryAction>
-        </ListItemButton>
+        </ListItem>
       ))}
 
       <Menu
@@ -125,9 +128,9 @@ const ChatList = ({
           Borrar
         </MenuItem>
         <MenuItem
-          onClick={() => {
+          onClick={(e) => {
             const chat = savedChats.find((c) => c.id === selectedChatId);
-            handleEditClick(selectedChatId, chat.titulo);
+            handleEditClick(selectedChatId, chat.titulo, e);
           }}
         >
           Editar

@@ -43,7 +43,7 @@ export default function SideBar({
     }
   };
 
-  const handleEdit = (chatId, newTitle) => {
+  const handleEdit = (chatId, newTitle, event) => {
     if (newTitle) {
       setSavedChats((prevChats) =>
         prevChats.map((chat) =>
