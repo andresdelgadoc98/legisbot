@@ -96,7 +96,7 @@ const ChatList = ({
           ) : (
             <ListItemText
               primary={truncateText(chat.titulo, 32)}
-              primaryTypographyProps={{ fontSize: ".9rem" }}
+              primaryTypographyProps={{ fontSize: ".85rem" }}
             />
           )}
           <ListItemSecondaryAction>

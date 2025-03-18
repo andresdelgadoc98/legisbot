@@ -64,10 +64,22 @@ export default function SideBar({
   };
 
   return (
-    <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
+    <Drawer
+      anchor="left"
+      open={isDrawerOpen}
+      onClose={toggleDrawer(false)}
+      PaperProps={{
+        sx: {
+          width: {
+            xs: "70%", // 75% en móviles (extra-small)
+            md: "20%", // 25% en escritorio (medium y superior)
+          },
+          maxWidth: "100%", // Evita que exceda el viewport
+        },
+      }}
+    >
       <Box
         sx={{
-          width: 280,
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -79,7 +91,7 @@ export default function SideBar({
             padding: "16px",
             position: "sticky",
             top: 0,
-            zIndex: 1, // Asegura que el botón esté por encima del contenido
+            zIndex: 1,
           }}
         >
           <Button
