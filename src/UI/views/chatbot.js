@@ -250,7 +250,8 @@ const Chat = () => {
     setShouldScrollToEnd(!open); // Desactiva scroll al abrir, activa al cerrar
   };
 
-  const handleChatSelection = async (chatId) => {
+  const handleChatSelection = async (chatId, e) => {
+    toggleDrawer(false)(e);
     const response = await ChatAPI.getMessages(idUser, chatId);
     const folder = response.data.preferencia.document;
     setSelectedChatId(chatId);

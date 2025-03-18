@@ -79,7 +79,7 @@ const ChatList = ({
       {savedChats.map((chat) => (
         <ListItemButton
           key={chat.id}
-          onClick={() => handleChatSelection(chat.id)}
+          onClick={(e) => handleChatSelection(chat.id, e)}
         >
           {editingChatId === chat.id ? (
             <TextField
