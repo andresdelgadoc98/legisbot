@@ -16,7 +16,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ModalSettings from "../components/Modals/ModalSettings";
 import myImage from "./chatbot.png";
 import io from "socket.io-client";
-
+import { requestForToken, onMessageListener } from "../../Utils/firebase";
+import SideBarMain from "../components/SideBars/SideBarMain";
+import Notification from "../components/Utils/Notification";
 const socket = io(config.WEB_SOCKET_URL, {
   transports: ["websocket"],
 });
@@ -48,6 +50,12 @@ const Chat = () => {
   const [shouldScrollToEnd, setShouldScrollToEnd] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const [IsDrawerOpenMain, SetIsDrawerOpenMain] = useState();
+  /*
+  const existingToken = localStorage.getItem("fcmToken");
+  if (!existingToken) {
+    requestForToken();
+  } */
 
   useEffect(() => {
     async function fetchData() {
@@ -141,6 +149,7 @@ const Chat = () => {
     fetchData();
   }, []);
   //  }, [documentsList]);
+
   useEffect(() => {
     const handleResponse = (data) => {
       setMessages((prev) => {
@@ -157,19 +166,38 @@ const Chat = () => {
     };
 
     const handleResponseEnd = () => {
+      console.log({ searchType });
+      if (searchType === "documentos") {
+        setMessages((prev) => {
+          const lastMessage = prev[prev.length - 1];
+          if (lastMessage?.sender === "bot") {
+            return [
+              ...prev.slice(0, -1),
+              {
+                text: lastMessage.text + `\n\n**Fuentes:** ${name_file}`,
+                sender: "bot",
+              },
+            ];
+          }
+          return prev;
+        });
+      }
       setIsBotResponding(false);
     };
 
+    // Escucha los eventos del socket
     socket.on("response", handleResponse);
     socket.on("response_end", handleResponseEnd);
+
+    // Limpia los listeners al desmontar el componente
     return () => {
       socket.off("response", handleResponse);
       socket.off("response_end", handleResponseEnd);
     };
-  }, []);
+  }, [name_file]); // Dependencia: el efecto se ejecuta cuando `name_file` cambia
 
   const handleSendMessage = async () => {
-    if (searchType === "jurisprudencias" && context.length === 0) {
+    if (searchType === "jurisprudencias" && context === null) {
       alert(
         "Por favor, proporciona un contexto antes de buscar jurisprudencias."
       );
@@ -244,10 +272,20 @@ const Chat = () => {
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
     ) {
-      return; // No cambiamos shouldScrollToEnd aquí, solo evitamos acción con Tab/Shift
+      return;
     }
     setIsDrawerOpen(open);
-    setShouldScrollToEnd(!open); // Desactiva scroll al abrir, activa al cerrar
+    setShouldScrollToEnd(!open);
+  };
+
+  const toggleDrawerMain = (open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    SetIsDrawerOpenMain(open);
   };
 
   const handleChatSelection = async (chatId, e) => {
@@ -338,6 +376,7 @@ const Chat = () => {
           fontFamily: "'Roboto', sans-serif",
         }}
       >
+        <Notification />
         <Header
           toggleDrawer={toggleDrawer}
           searchType={searchType}
@@ -348,6 +387,7 @@ const Chat = () => {
           savedChats={savedChats}
           selectedChatId={selectedChatId}
           setShouldScrollToEnd={setShouldScrollToEnd}
+          toggleDrawerMain={toggleDrawerMain}
         />
         <Box
           sx={{
@@ -439,6 +479,11 @@ const Chat = () => {
         setSelectedChatId={setSelectedChatId}
         setSelectedValue={setSelectedValue}
         setsearchType={setsearchType}
+      />
+      <SideBarMain
+        toggleDrawer={toggleDrawerMain}
+        isDrawerOpen={IsDrawerOpenMain}
+        handleOpenModal={handleOpenModal}
       />
       <ModalContext
         selectedChatId={selectedChatId}

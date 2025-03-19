@@ -9,9 +9,13 @@ import {
 import CssBaseline from "@mui/material/CssBaseline";
 import { jwtDecode } from "jwt-decode";
 import tokenAPI from "./Services/Controllers/token";
-import { ThemeContext, ThemeProvider } from "../src/UI/components/ThemeContext";
+import {
+  ThemeContext,
+  ThemeProvider,
+} from "../src/UI/components/Utils/ThemeContext";
 import UsersAPI from "./Services/Controllers/Users";
-
+import Jurisprudencias from "./UI/views/jurisprudencias";
+import Library from "./UI/views/library";
 const renewAccessToken = async () => {
   try {
     const res = await tokenAPI.getAccessToken();
@@ -132,6 +136,23 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/jurisprudencias"
+              element={
+                <ProtectedRoute>
+                  <Jurisprudencias />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/library"
+              element={
+                <ProtectedRoute>
+                  <Library />
+                </ProtectedRoute>
+              }
+            />
+
             <Route path="/login" element={<Login />} />
           </Routes>
         </BrowserRouter>

@@ -3,25 +3,22 @@ import InfoIcon from "./UI/views/chatbot.png";
 
 let isLocalhost = Boolean(
   window.location.hostname === "localhost" ||
-    // [::1] is the IPv6 localhost address.
     window.location.hostname === "[::1]" ||
-    // 127.0.0.0/8 are considered localhost for IPv4.
     window.location.hostname.match(
       /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
     )
 );
 
 export function register(config) {
-  if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
-    // The URL constructor is available in all browsers that support SW.
+  if (
+    process.env.NODE_ENV === "production" &&
+    "serviceWorker" in navigator && // Aseguramos que navigator.serviceWorker esté definido
+    (window.location.protocol === "https:" || isLocalhost) // Solo HTTPS o localhost
+  ) {
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
-      // Our service worker won't work if PUBLIC_URL is on a different origin
-      // from what our page is served on. This might happen if a CDN is used to
-      // serve assets; see https://github.com/facebook/create-react-app/issues/2374
       return;
     }
-
     window.addEventListener("load", () => {
       const swUrl = `/worker.js`;
       console.log("swUrl", swUrl);
@@ -49,7 +46,6 @@ export function register(config) {
       }
       let refreshing = false;
 
-      // detect controller change and refresh the page
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         if (!refreshing) {
           window.location.reload(true);
@@ -61,7 +57,7 @@ export function register(config) {
 }
 
 function invokeServiceWorkerUpdateFlow(registration) {
-  var pjson = require("../package.json");
+  var pjson = require("../../package.json");
   console.log(pjson.version);
   toast.info(`Application services improved ${pjson.version} `, {
     toastId: "appUpdateAvailable", // Prevent duplicate toasts

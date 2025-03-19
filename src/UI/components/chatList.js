@@ -80,7 +80,6 @@ const ChatList = ({
     <>
       {savedChats.map((chat) => (
         <ListItem key={chat.id} disablePadding>
-          {/* El ListItemButton solo envuelve el ListItemText para selección */}
           {editingChatId === chat.id ? (
             <TextField
               value={editedTitle}
@@ -92,7 +91,7 @@ const ChatList = ({
               fullWidth
               sx={{ maxWidth: "200px" }}
               inputProps={{ maxLength: 45 }}
-              onClick={(e) => e.stopPropagation()} // Detiene clic en TextField
+              onClick={(e) => e.stopPropagation()}
             />
           ) : (
             <ListItemButton onClick={(e) => handleChatSelection(chat.id, e)}>
@@ -121,7 +120,7 @@ const ChatList = ({
       >
         <MenuItem
           onClick={(e) => {
-            handleDelete(selectedChatId, e); // Pasamos el evento
+            handleDelete(selectedChatId, e);
             handleMenuClose();
           }}
         >

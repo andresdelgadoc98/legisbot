@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { requestForToken, onMessageListener } from "../../firebase";
+import { requestForToken, onMessageListener } from "../../../Utils/firebase";
 import { ToastContainer, toast } from "react-toastify";
 
 const Notification = () => {
@@ -23,7 +23,10 @@ const Notification = () => {
     }
   }, [notification]);
 
-  requestForToken();
+  const existingToken = localStorage.getItem("fcmToken");
+  if (!existingToken) {
+    requestForToken();
+  }
 
   onMessageListener()
     .then((payload) => {

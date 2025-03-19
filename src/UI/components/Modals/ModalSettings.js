@@ -13,10 +13,9 @@ import {
   FormControl,
 } from "@mui/material";
 
-import { ThemeContext } from "../ThemeContext";
+import { ThemeContext } from "../Utils/ThemeContext";
 import UsersAPI from "../../../Services/Controllers/Users";
 import { ToastContainer, Zoom } from "react-toastify";
-//import Notification from "../Notification";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -80,7 +79,7 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
     <Modal
       open={isOpen}
       onClose={onClose}
-      sx={{ overflow: "hidden" }} // Evita scroll en el backdrop del Modal
+      sx={{ overflow: "hidden" }}
       disableScrollLock={false}
     >
       <Box sx={style}>
@@ -207,7 +206,6 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
             transition={Zoom}
             closeButton={false}
           />
-          {/*<Notification />*/}
         </TabPanel>
       </Box>
     </Modal>

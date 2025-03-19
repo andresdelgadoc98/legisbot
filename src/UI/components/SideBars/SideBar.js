@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Drawer, List, Button } from "@mui/material";
-import ChatsAPI from "../../Services/Controllers/Chats";
-import ChatList from "./chatList";
+import ChatsAPI from "../../../Services/Controllers/Chats";
+import ChatList from "../chatList";
 import MessageIcon from "@mui/icons-material/Message";
 import { useNavigate } from "react-router-dom";
 export default function SideBar({
@@ -65,16 +65,16 @@ export default function SideBar({
 
   return (
     <Drawer
-      anchor="left"
+      anchor="right"
       open={isDrawerOpen}
       onClose={toggleDrawer(false)}
       PaperProps={{
         sx: {
           width: {
-            xs: "70%", // 75% en móviles (extra-small)
-            md: "20%", // 25% en escritorio (medium y superior)
+            xs: "70%",
+            md: "20%",
           },
-          maxWidth: "100%", // Evita que exceda el viewport
+          maxWidth: "100%",
         },
       }}
     >
@@ -99,15 +99,18 @@ export default function SideBar({
             fullWidth
             onClick={handleNewChat}
             startIcon={<MessageIcon />}
-            sx={{ marginTop: 1 }}
           >
             Nuevo Chat
           </Button>
         </Box>
 
-        {/* Contenido desplazable */}
-        <Box sx={{ overflowY: "auto", flexGrow: 1 }}>
-          <Typography variant="h6" sx={{ padding: "16px" }}>
+        <Box
+          sx={{
+            overflowY: "auto",
+            flexGrow: 1,
+          }}
+        >
+          <Typography variant="h6" sx={{ textAlign: "center" }}>
             Chats Guardados
           </Typography>
           <List>

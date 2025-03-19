@@ -3,8 +3,8 @@ import Message from "./Message";
 import MessageContainer from "./MessageContainer";
 import ModalContext from "./Modals/ModalContext";
 import ModalSearch from "./Modals/ModalSearch";
-import SideBar from "./SideBar";
-import Header from "./Header";
+import SideBar from "./SideBars/SideBar";
+import Header from "./Headers/Header";
 export {
   ChatList,
   Message,
