@@ -2,7 +2,7 @@
 export function register(config) {
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      const swUrl = "/worker.js"; // Ruta relativa a /public
+      const swUrl = "/worker.js";
       navigator.serviceWorker
         .register(swUrl)
         .then((registration) => {

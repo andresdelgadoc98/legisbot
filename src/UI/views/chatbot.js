@@ -15,12 +15,13 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import myImage from "./chatbot.png";
 import io from "socket.io-client";
-import { requestForToken, onMessageListener } from "../../Utils/firebase";
 import SideBarMain from "../components/SideBars/SideBarMain";
+import { requestForToken } from "../../Utils/firebase";
 import Notification from "../components/Utils/Notification";
 const socket = io(config.WEB_SOCKET_URL, {
   transports: ["websocket"],
 });
+
 const Chat = () => {
   const idUser = UsersAPI.getID();
   const [messages, setMessages] = useState([]);
@@ -367,6 +368,7 @@ const Chat = () => {
 
   return (
     <div>
+      <Notification />
       <Box
         sx={{
           position: "relative",
@@ -375,7 +377,6 @@ const Chat = () => {
           fontFamily: "'Roboto', sans-serif",
         }}
       >
-        <Notification />
         <Header
           toggleDrawer={toggleDrawer}
           searchType={searchType}

@@ -16,6 +16,7 @@ import {
 import UsersAPI from "./Services/Controllers/Users";
 import Jurisprudencias from "./UI/views/jurisprudencias";
 import Library from "./UI/views/library";
+import Notification from "./Services/Controllers/Notification";
 const renewAccessToken = async () => {
   try {
     const res = await tokenAPI.getAccessToken();
@@ -128,6 +129,7 @@ function App() {
       <div className="App">
         <BrowserRouter>
           <Routes>
+            <Route path="/login" element={<Login />} />
             <Route
               path="/"
               element={
@@ -152,8 +154,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
-            <Route path="/login" element={<Login />} />
           </Routes>
         </BrowserRouter>
       </div>
