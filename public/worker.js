@@ -1,5 +1,5 @@
 const CACHE_NAME = "cache";
-const version = "0.0.1";
+const version = "0.0.2";
 
 // Instalación del service worker
 self.addEventListener("install", (event) => {
@@ -17,6 +17,7 @@ self.addEventListener("install", (event) => {
 
 // Manejar mensajes push de FCM
 self.addEventListener("push", (event) => {
+  console.log("manear mensajes push de FCM");
   let data = {};
   if (event.data) {
     data = event.data.json(); // Los datos enviados desde FCM
@@ -27,35 +28,46 @@ self.addEventListener("push", (event) => {
     body: data.notification?.body || "Haz clic para ver más detalles.",
     icon: data.notification?.icon || "/path/to/icon.png",
     data: {
-      url: data.data?.url || "https://www.example.com", // URL específica desde FCM
+      url: data.data?.url || "https://www.example2.com", // URL específica desde FCM
     },
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Manejar clics en notificaciones
 self.addEventListener("notificationclick", (event) => {
+  console.log("Clic en notificación detectado:", event.notification);
   event.notification.close();
-  const urlToOpen = event.notification.data?.url || "https://www.example.com";
+
+  const urlToOpen = event.notification.data?.url || "https://localhost:5002/";
+  console.log("URL objetivo:", urlToOpen);
 
   event.waitUntil(
     clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((clientList) => {
-        for (const client of clientList) {
+        console.log("Clientes encontrados:", clientList.length);
+
+        if (clientList.length > 0) {
+          // Si hay pestañas abiertas, redirigir la primera
+          const client = clientList[0];
           if ("navigate" in client) {
+            console.log("Navegando pestaña existente a:", urlToOpen);
             return client.navigate(urlToOpen).then(() => client.focus());
           }
         }
-        return clients.openWindow(urlToOpen);
+
+        // Si no hay pestañas, abrir una nueva
+        console.log("No hay pestañas abiertas, abriendo:", urlToOpen);
+        return clients.openWindow(urlToOpen).then((windowClient) => {
+          console.log("Nueva ventana abierta:", windowClient);
+        });
       })
       .catch((err) => {
         console.error("Error al manejar el clic:", err);
       })
   );
 });
-
 // Manejo de fetch (sin cambios)
 self.addEventListener("fetch", (event) => {
   if (

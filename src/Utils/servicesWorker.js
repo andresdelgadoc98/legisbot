@@ -1,164 +1,26 @@
-import { toast } from "react-toastify";
-import InfoIcon from "../UI/views/chatbot.png";
-
-let isLocalhost = Boolean(
-  window.location.hostname === "localhost" ||
-    window.location.hostname === "[::1]" ||
-    window.location.hostname.match(
-      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-    )
-);
-
+// /src/Utils/servicesWorker.js
 export function register(config) {
-  if (
-    process.env.NODE_ENV === "production" &&
-    "serviceWorker" in navigator && // Aseguramos que navigator.serviceWorker esté definido
-    (window.location.protocol === "https:" || isLocalhost) // Solo HTTPS o localhost
-  ) {
-    const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
-    if (publicUrl.origin !== window.location.origin) {
-      return;
-    }
+  if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      const swUrl = `/worker.js`;
-      console.log("swUrl", swUrl);
-
-      if (isLocalhost) {
-        // This is running on localhost. Let's check if a service worker still exists or not.
-        checkValidServiceWorker(swUrl, config);
-
-        // Add some additional logging to localhost, pointing developers to the
-        // service worker/PWA documentation.
-        navigator.serviceWorker.ready.then(() => {
+      const swUrl = "/worker.js"; // Ruta relativa a /public
+      navigator.serviceWorker
+        .register(swUrl)
+        .then((registration) => {
           console.log(
-            "This web app is being served cache-first by a service " +
-              "worker. To learn more, visit https://bit.ly/CRA-PWA"
+            "Service Worker registrado con éxito:",
+            registration.scope
           );
-        });
-
-        // // Then later, request a one-off sync:
-        // navigator.serviceWorker.ready.then(function (swRegistration) {
-        //     return swRegistration.sync.register('myFirstSync');
-        // });
-      } else {
-        // Is not localhost. Just register service worker
-        registerValidSW(swUrl, config);
-      }
-      let refreshing = false;
-
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (!refreshing) {
-          window.location.reload(true);
-          refreshing = true;
-        }
-      });
-    });
-  }
-}
-
-function invokeServiceWorkerUpdateFlow(registration) {
-  var pjson = require("../../package.json");
-  console.log(pjson.version);
-  toast.info(`Application services improved ${pjson.version} `, {
-    toastId: "appUpdateAvailable", // Prevent duplicate toasts
-    onClick: () => {
-      if (registration.waiting) {
-        // let waiting Service Worker know it should became active
-        registration.waiting.postMessage("SKIP_WAITING");
-      }
-    }, // Closes windows on click
-    autoClose: false, // Prevents toast from auto closing
-    icon: <InfoIcon />,
-  });
-}
-
-function registerValidSW(swUrl, config) {
-  navigator.serviceWorker
-    .register(swUrl)
-    .then((registration) => {
-      // Check for updates at start.
-      registration.update();
-      // Check for updates every min.
-      setInterval(() => {
-        registration.update();
-      }, 1000 * 60);
-
-      // ensure the case when the updatefound event was missed is also handled
-      // by re-invoking the prompt when there's a waiting Service Worker
-      if (registration.waiting) {
-        invokeServiceWorkerUpdateFlow(registration);
-      }
-
-      // detect Service Worker update available and wait for it to become installed
-      registration.onupdatefound = () => {
-        const installingWorker = registration.installing;
-        if (installingWorker == null) {
-          return;
-        }
-        // wait until the new Service worker is actually installed (ready to take over)
-        installingWorker.onstatechange = () => {
-          if (registration.waiting) {
-            if (navigator.serviceWorker.controller) {
-              // if there's an existing controller (previous Service Worker), show the prompt
-              invokeServiceWorkerUpdateFlow(registration);
-              console.log(
-                "New assets is available and will be used when all " +
-                  "tabs for this page are closed. See https://bit.ly/CRA-PWA"
-              );
-
-              // Execute callback
-              if (config && config.onUpdate) {
-                config.onUpdate(registration);
-              }
-            } else {
-              // At this point, everything has been precached.
-              // It's the perfect time to display a
-              // "Index is cached for offline use." message.
-              console.log("Index is cached for offline use.");
-
-              // Execute callback
-              if (config && config.onSuccess) {
-                console.log("if (config && config.onSuccess) {");
-                config.onSuccess(registration);
-              }
-            }
+          if (config && config.onSuccess) {
+            config.onSuccess(registration);
           }
-        };
-      };
-    })
-    .catch((error) => {
-      console.error("Error during service worker registration:", error);
-    });
-}
-
-function checkValidServiceWorker(swUrl, config) {
-  // Check if the service worker can be found. If it can't reload the page.
-  fetch(swUrl, {
-    headers: { "Service-Worker": "script" },
-  })
-    .then((response) => {
-      // Ensure service worker exists, and that we really are getting a JS file.
-      const contentType = response.headers.get("content-type");
-      if (
-        response.status === 404 ||
-        (contentType != null && contentType.indexOf("javascript") === -1)
-      ) {
-        // No service worker found. Probably a different app. Reload the page.
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.unregister().then(() => {
-            window.location.reload();
-          });
+        })
+        .catch((err) => {
+          console.error("Error al registrar el Service Worker:", err);
         });
-      } else {
-        // Service worker found. Proceed as normal.
-        registerValidSW(swUrl, config);
-      }
-    })
-    .catch(() => {
-      console.log(
-        "No internet connection found. App is running in offline mode."
-      );
     });
+  } else {
+    console.log("Service Worker no soportado por el navegador.");
+  }
 }
 
 export function unregister() {
@@ -167,8 +29,8 @@ export function unregister() {
       .then((registration) => {
         registration.unregister();
       })
-      .catch((error) => {
-        console.error(error.message);
+      .catch((err) => {
+        console.error("Error al desregistrar:", err);
       });
   }
 }
