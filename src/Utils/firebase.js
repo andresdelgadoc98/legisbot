@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import notification from "../Services/Controllers/Notification";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDW54wAh1830gEDwI4Lm7EJjnenwmQHVGQ",
   authDomain: "halachia-afd77.firebaseapp.com",
@@ -10,6 +11,7 @@ const firebaseConfig = {
   appId: "1:861922976469:web:9e6791d907145c5334385c",
   measurementId: "G-6Z2R9VB53M",
 };
+
 const app = initializeApp(firebaseConfig);
 
 const isMessagingSupported = () =>
