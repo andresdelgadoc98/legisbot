@@ -16,8 +16,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import myImage from "./chatbot.png";
 import io from "socket.io-client";
 import SideBarMain from "../components/SideBars/SideBarMain";
-import { requestForToken } from "../../Utils/firebase";
-import Notification from "../components/Utils/Notification";
+
 const socket = io(config.WEB_SOCKET_URL, {
   transports: ["websocket"],
 });
@@ -56,6 +55,16 @@ const Chat = () => {
   if (!existingToken) {
     requestForToken();
   } */
+
+  const [isFirstLogin, setIsFirstLogin] = useState(false);
+
+  useEffect(() => {
+    const hasLoggedInBefore = localStorage.getItem("hasLoggedIn");
+    if (!hasLoggedInBefore) {
+      setIsFirstLogin(true);
+      localStorage.setItem("hasLoggedIn", "true");
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -368,7 +377,6 @@ const Chat = () => {
 
   return (
     <div>
-      <Notification />
       <Box
         sx={{
           position: "relative",
@@ -389,6 +397,7 @@ const Chat = () => {
           setShouldScrollToEnd={setShouldScrollToEnd}
           toggleDrawerMain={toggleDrawerMain}
         />
+
         <Box
           sx={{
             position: "absolute",
@@ -443,7 +452,6 @@ const Chat = () => {
             />
           )}
         </Box>
-
         <Box
           sx={{
             position: "fixed",

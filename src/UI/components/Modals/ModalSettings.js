@@ -15,7 +15,7 @@ import {
 
 import { ThemeContext } from "../Utils/ThemeContext";
 import UsersAPI from "../../../Services/Controllers/Users";
-import { ToastContainer, Zoom } from "react-toastify";
+import Notification from "../Utils/Notification";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -115,6 +115,10 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
           />
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            <Notification isFirstLogin={true} />
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
             <Button
               variant="outlined"
               sx={{ mt: 2 }}
@@ -189,20 +193,6 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
                 ? new Date(dataUser.licencia_fecha_fin).toLocaleDateString()
                 : "No tiene licencia"
             }
-          />
-
-          <ToastContainer
-            position="bottom-center"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={true}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            transition={Zoom}
-            closeButton={false}
           />
         </TabPanel>
       </Box>
