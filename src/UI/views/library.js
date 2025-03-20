@@ -12,12 +12,15 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  TextField,
 } from "@mui/material";
 import Documents from "../../Services/Controllers/Documents";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import Header from "../components/Headers/HeaderMain";
 import SideBar from "../components/SideBars/SideBarMain";
+import config from "../../config/config";
+
 const DocumentViewer = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [jurisdictions] = useState(["tamaulipas", "federal"]);
@@ -26,6 +29,7 @@ const DocumentViewer = () => {
   const [selectedDocument, setSelectedDocument] = useState(null);
   const iframeRef = useRef(null);
   const [IsDrawerOpenMain, SetIsDrawerOpenMain] = useState();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleJurisdictionChange = async (event) => {
     const jurisdiction = event.target.value;
@@ -73,6 +77,18 @@ const DocumentViewer = () => {
     SetIsDrawerOpenMain(open);
   };
 
+  // Función para eliminar acentos
+  const removeAccents = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  };
+
+  // Filtrar documentos según el texto del buscador, sin sensibilidad a acentos
+  const filteredDocuments = documents.filter((doc) =>
+    removeAccents(doc.name.toLowerCase()).includes(
+      removeAccents(searchQuery.toLowerCase())
+    )
+  );
+
   return (
     <Box sx={{ minHeight: "100vh", width: "100%" }}>
       <Header toggleDrawerMain={toggleDrawerMain} />
@@ -89,8 +105,8 @@ const DocumentViewer = () => {
           md={4}
           elevation={3}
           sx={{
-            maxHeight: { xs: "50vh", md: "100vh" }, // Limita altura en móviles
-            overflow: "auto", // Scroll si el contenido es largo
+            maxHeight: { xs: "50vh", md: "100vh" },
+            overflow: "auto",
           }}
         >
           <Box sx={{ p: 2 }}>
@@ -112,12 +128,22 @@ const DocumentViewer = () => {
               </Select>
             </FormControl>
 
+            {/* Buscador de documentos */}
+            <TextField
+              fullWidth
+              label="Buscar documento"
+              variant="outlined"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+
             {/* Lista de documentos */}
             <List
               sx={{ maxHeight: { xs: "40vh", md: "80vh" }, overflow: "auto" }}
             >
-              {documents.length > 0 ? (
-                documents.map((doc, index) => (
+              {filteredDocuments.length > 0 ? (
+                filteredDocuments.map((doc, index) => (
                   <ListItem
                     key={index}
                     button
@@ -142,7 +168,9 @@ const DocumentViewer = () => {
                 ))
               ) : (
                 <Typography sx={{ p: 2 }}>
-                  Selecciona una jurisdicción para ver los documentos
+                  {searchQuery
+                    ? "No se encontraron documentos que coincidan con la búsqueda"
+                    : "Selecciona una jurisdicción para ver los documentos"}
                 </Typography>
               )}
             </List>
@@ -168,8 +196,8 @@ const DocumentViewer = () => {
                 </IconButton>
                 <iframe
                   ref={iframeRef}
-                  src={selectedDocument.file}
-                  title={selectedDocument.name} // Corregí 'names' a 'name'
+                  src={`${config.URL_DOCUMENTS}${selectedDocument.jurisdiccion}/${selectedDocument.folder}.pdf`}
+                  title={selectedDocument.name}
                   style={{ width: "100%", height: "100%", border: "none" }}
                 />
               </>

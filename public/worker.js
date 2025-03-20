@@ -15,9 +15,12 @@ this.addEventListener("install", (event) => {
   );
 });
 
-// Update a service worker
-// Inside the service worker’s activate event, delete all
-// previously cached files if necessary
+self.addEventListener("notificationclick", function (event) {
+  clients.openWindow(
+    "https://dev.to/ajayupreti/how-to-use-push-notifications-in-react-a-step-by-step-guide-341d"
+  );
+});
+
 self.addEventListener("activate", function (event) {
   event.waitUntil(
     caches.keys().then(function (cacheNames) {

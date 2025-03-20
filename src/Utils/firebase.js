@@ -45,8 +45,8 @@ export const requestForToken = () => {
     vapidKey: `BDqVqQXskoAkiw7rHy1JmvxIixFcMPLLz-FmTTRn8NIrV1T9r32QQ9zptdVK8yfhhNwZwIEORNcV8vxPYFzdScQ`,
   })
     .then((currentToken) => {
+      console.log({ currentToken });
       if (currentToken) {
-        console.log("current token for client: ", currentToken);
         notification.sendToken(currentToken);
         if (
           localStorage.getItem("fcmToken") &&
@@ -70,7 +70,6 @@ export const requestForToken = () => {
     });
 };
 
-// Función para escuchar mensajes
 export const onMessageListener = () => {
   if (!messaging) {
     console.log(
@@ -81,6 +80,7 @@ export const onMessageListener = () => {
 
   return new Promise((resolve) => {
     onMessage(messaging, (payload) => {
+      console.log({ payload });
       resolve(payload);
     });
   });

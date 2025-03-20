@@ -13,7 +13,6 @@ import {
   Header,
 } from "../components";
 import { useNavigate, useLocation } from "react-router-dom";
-import ModalSettings from "../components/Modals/ModalSettings";
 import myImage from "./chatbot.png";
 import io from "socket.io-client";
 import { requestForToken, onMessageListener } from "../../Utils/firebase";
@@ -513,11 +512,6 @@ const Chat = () => {
         jurisdiccionSelected={jurisdiccionSelected}
         setJurisdicciónSelected={setJurisdicciónSelected}
         setShouldScrollToEnd={setShouldScrollToEnd}
-      />
-      <ModalSettings
-        isOpen={isProfileModalOpen}
-        onClose={handleCloseModal}
-        dataUser={dataUser}
       />
     </div>
   );

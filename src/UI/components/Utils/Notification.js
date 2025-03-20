@@ -7,29 +7,17 @@ const Notification = () => {
   const notify = () => toast(<ToastDisplay />);
 
   function ToastDisplay() {
-    return (
-      <div>
-        <p>
-          <b>{notification?.title}</b>
-        </p>
-        <p>{notification?.body}</p>
-      </div>
-    );
+    return <div></div>;
   }
 
-  useEffect(() => {
-    if (notification?.title) {
-      notify();
-    }
-  }, [notification]);
-
   const existingToken = localStorage.getItem("fcmToken");
-  if (!existingToken) {
+  if (existingToken) {
     requestForToken();
   }
 
   onMessageListener()
     .then((payload) => {
+      console.log({ payload });
       setNotification({
         title: payload?.notification?.title,
         body: payload?.notification?.body,

@@ -71,7 +71,6 @@ function JurisprudenceFinder() {
         navigate(`?yearWeek=${yearWeekParam}`, { replace: true });
 
         const result = await externalAPI.getJurisprudencias(yearWeekParam);
-        console.log(result.documents);
         setJurisprudencias(result.documents || []); // Aseguro que sea un array vacío si no hay documentos
       } catch (error) {
         console.error("Error al cargar jurisprudencias:", error);

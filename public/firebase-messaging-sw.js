@@ -23,5 +23,21 @@ const messaging = firebase.messaging();
 
 // Handle incoming messages while the app is not in focus (i.e in the background, hidden behind other tabs, or completely closed).
 messaging.onBackgroundMessage(function (payload) {
+  console.log({ payload });
   console.log("Received background message ", payload);
+});
+
+// Update a service worker
+self.addEventListener("activate", function (event) {
+  event.waitUntil(
+    caches.keys().then(function (cacheNames) {
+      return Promise.all(
+        cacheNames.map(function (cacheName) {
+          if (CACHE_NAME !== cacheName && cacheName.startsWith("cache")) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });

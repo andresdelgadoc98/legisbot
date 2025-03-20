@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import InfoIcon from "./UI/views/chatbot.png";
+import InfoIcon from "../UI/views/chatbot.png";
 
 let isLocalhost = Boolean(
   window.location.hostname === "localhost" ||

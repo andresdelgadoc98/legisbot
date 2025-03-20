@@ -190,9 +190,7 @@ const SettingsModal = ({ isOpen, onClose, dataUser }) => {
                 : "No tiene licencia"
             }
           />
-          {localStorage.getItem("fcmToken") ? (
-            <div>{localStorage.getItem("fcmToken")}</div>
-          ) : null}{" "}
+
           <ToastContainer
             position="bottom-center"
             autoClose={5000}
