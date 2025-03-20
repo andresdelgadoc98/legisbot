@@ -13,6 +13,7 @@ import {
   InputLabel,
   IconButton,
   TextField,
+  ListItemButton,
 } from "@mui/material";
 import Documents from "../../Services/Controllers/Documents";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
@@ -30,6 +31,7 @@ const DocumentViewer = () => {
   const iframeRef = useRef(null);
   const [IsDrawerOpenMain, SetIsDrawerOpenMain] = useState();
   const [searchQuery, setSearchQuery] = useState("");
+  const containerRef = useRef(null);
 
   const handleJurisdictionChange = async (event) => {
     const jurisdiction = event.target.value;
@@ -43,25 +45,21 @@ const DocumentViewer = () => {
       setDocuments([]);
     }
   };
-
-  // Alternar pantalla completa
   const toggleFullscreen = () => {
-    if (!isFullscreen && iframeRef.current) {
-      iframeRef.current.requestFullscreen();
+    if (!isFullscreen && containerRef.current) {
+      if (containerRef.current.requestFullscreen) {
+        containerRef.current.requestFullscreen();
+      } else if (containerRef.current.webkitRequestFullscreen) {
+        containerRef.current.webkitRequestFullscreen();
+      }
     } else {
-      document.exitFullscreen();
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
     }
   };
-
-  // Detectar cambios en el estado de pantalla completa
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () =>
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, []);
 
   const handleDocumentClick = (doc) => {
     setSelectedDocument(doc);
@@ -90,7 +88,7 @@ const DocumentViewer = () => {
   );
 
   return (
-    <Box sx={{ minHeight: "100vh", width: "100%" }}>
+    <Box sx={{ minHeight: "100vh", width: "100%", overflow: "auto" }}>
       <Header toggleDrawerMain={toggleDrawerMain} />
       <SideBar
         isDrawerOpen={IsDrawerOpenMain}
@@ -144,7 +142,7 @@ const DocumentViewer = () => {
             >
               {filteredDocuments.length > 0 ? (
                 filteredDocuments.map((doc, index) => (
-                  <ListItem
+                  <ListItemButton
                     key={index}
                     button
                     selected={selectedDocument === doc}
@@ -164,7 +162,7 @@ const DocumentViewer = () => {
                         </>
                       }
                     />
-                  </ListItem>
+                  </ListItemButton>
                 ))
               ) : (
                 <Typography sx={{ p: 2 }}>
@@ -185,20 +183,34 @@ const DocumentViewer = () => {
           elevation={3}
           sx={{ height: { xs: "50vh", md: "100vh" } }} // Ajusta altura según pantalla
         >
-          <Box sx={{ p: 2, height: "100%", position: "relative" }}>
+          <Box
+            ref={containerRef}
+            sx={{ p: 2, height: "100%", position: "relative" }}
+          >
             {selectedDocument ? (
               <>
                 <IconButton
                   onClick={toggleFullscreen}
-                  sx={{ position: "absolute", top: 10, right: 10, zIndex: 1 }}
+                  sx={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    zIndex: 1,
+                    color: "black",
+                  }}
                 >
                   {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
                 </IconButton>
                 <iframe
                   ref={iframeRef}
-                  src={`${config.URL_DOCUMENTS}${selectedDocument.jurisdiccion}/${selectedDocument.folder}.pdf`}
+                  fileUrl={`${config.URL_DOCUMENTS}${selectedDocument.jurisdiccion}/${selectedDocument.folder}.pdf`}
                   title={selectedDocument.name}
-                  style={{ width: "100%", height: "100%", border: "none" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    minHeight: "70vh", // Mínimo alto en móviles
+                    border: "none",
+                  }}
                 />
               </>
             ) : (

@@ -38,14 +38,14 @@ export const requestForToken = () => {
     console.log(
       "Messaging no disponible. Se requiere HTTPS o localhost para obtener un token."
     );
-    return Promise.resolve(null); // Devuelve una promesa resuelta con null
+    return Promise.resolve(null);
   }
 
   return getToken(messaging, {
     vapidKey: `BDqVqQXskoAkiw7rHy1JmvxIixFcMPLLz-FmTTRn8NIrV1T9r32QQ9zptdVK8yfhhNwZwIEORNcV8vxPYFzdScQ`,
   })
     .then((currentToken) => {
-      console.log({ currentToken });
+      console.log(currentToken);
       if (currentToken) {
         notification.sendToken(currentToken);
         if (

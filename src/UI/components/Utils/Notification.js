@@ -11,7 +11,8 @@ const Notification = () => {
   }
 
   const existingToken = localStorage.getItem("fcmToken");
-  if (existingToken) {
+  console.log(existingToken);
+  if (existingToken == null) {
     requestForToken();
   }
 

@@ -193,7 +193,7 @@ const Chat = () => {
       socket.off("response", handleResponse);
       socket.off("response_end", handleResponseEnd);
     };
-  }, [name_file]); // Dependencia: el efecto se ejecuta cuando `name_file` cambia
+  }, [name_file, searchType]); // Dependencia: el efecto se ejecuta cuando `name_file` cambia
 
   const handleSendMessage = async () => {
     if (searchType === "jurisprudencias" && context === null) {
