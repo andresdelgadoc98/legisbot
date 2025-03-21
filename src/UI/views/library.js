@@ -1,14 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   Box,
   Grid,
   Select,
   MenuItem,
   List,
-  ListItem,
   ListItemText,
   Typography,
-  Paper,
   FormControl,
   InputLabel,
   IconButton,
@@ -21,6 +19,10 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import Header from "../components/Headers/HeaderMain";
 import SideBar from "../components/SideBars/SideBarMain";
 import config from "../../config/config";
+import { Viewer, Worker } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 const DocumentViewer = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -28,11 +30,10 @@ const DocumentViewer = () => {
   const [selectedJurisdiction, setSelectedJurisdiction] = useState("");
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
-  const iframeRef = useRef(null);
   const [IsDrawerOpenMain, SetIsDrawerOpenMain] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef(null);
-
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const handleJurisdictionChange = async (event) => {
     const jurisdiction = event.target.value;
     setSelectedJurisdiction(jurisdiction);
@@ -75,12 +76,10 @@ const DocumentViewer = () => {
     SetIsDrawerOpenMain(open);
   };
 
-  // Función para eliminar acentos
   const removeAccents = (str) => {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   };
 
-  // Filtrar documentos según el texto del buscador, sin sensibilidad a acentos
   const filteredDocuments = documents.filter((doc) =>
     removeAccents(doc.name.toLowerCase()).includes(
       removeAccents(searchQuery.toLowerCase())
@@ -95,7 +94,6 @@ const DocumentViewer = () => {
         toggleDrawer={toggleDrawerMain}
       />
       <Grid container spacing={2} sx={{ flexWrap: "wrap", height: "100%" }}>
-        {/* Panel izquierdo */}
         <Grid
           item
           xs={12}
@@ -125,8 +123,6 @@ const DocumentViewer = () => {
                 ))}
               </Select>
             </FormControl>
-
-            {/* Buscador de documentos */}
             <TextField
               fullWidth
               label="Buscar documento"
@@ -136,7 +132,6 @@ const DocumentViewer = () => {
               sx={{ mb: 2 }}
             />
 
-            {/* Lista de documentos */}
             <List
               sx={{ maxHeight: { xs: "40vh", md: "80vh" }, overflow: "auto" }}
             >
@@ -181,7 +176,7 @@ const DocumentViewer = () => {
           sm={6}
           md={8}
           elevation={3}
-          sx={{ height: { xs: "50vh", md: "100vh" } }} // Ajusta altura según pantalla
+          sx={{ height: { xs: "50vh", md: "100vh" } }}
         >
           <Box
             ref={containerRef}
@@ -201,17 +196,16 @@ const DocumentViewer = () => {
                 >
                   {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
                 </IconButton>
-                <iframe
-                  ref={iframeRef}
-                  fileUrl={`${config.URL_DOCUMENTS}${selectedDocument.jurisdiccion}/${selectedDocument.folder}.pdf`}
-                  title={selectedDocument.name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    minHeight: "70vh", // Mínimo alto en móviles
-                    border: "none",
-                  }}
-                />
+                <Box sx={{ height: "100%", minHeight: "100vh", width: "100%" }}>
+                  <Worker
+                    workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}
+                  >
+                    <Viewer
+                      fileUrl={`${config.URL_DOCUMENTS}${selectedDocument.jurisdiccion}/${selectedDocument.folder}.pdf`}
+                      plugins={[defaultLayoutPluginInstance]}
+                    />
+                  </Worker>
+                </Box>
               </>
             ) : (
               <Box

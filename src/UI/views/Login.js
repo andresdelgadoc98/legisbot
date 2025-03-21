@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Users from "../../Services/Controllers/Users";
 import Cookies from "js-cookie";
-import myImage from "./chatbot.png";
+import myImage from "../../assets/chatbot.png";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import tokenAPI from "../../Services/Controllers/token";
@@ -41,7 +41,6 @@ const Login = () => {
     }
 
     if (email.includes("@") && password.length >= 6) {
-      let res;
       try {
         console.log("Iniciando sesión con:", { email, password });
         let res = await Users.login(email, password);

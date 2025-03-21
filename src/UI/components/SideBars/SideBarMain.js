@@ -11,11 +11,12 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import GavelIcon from "@mui/icons-material/Gavel"; // Icon for Jurisprudencias
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks"; // Icon for Biblioteca
+import GavelIcon from "@mui/icons-material/Gavel";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ChatIcon from "@mui/icons-material/Chat";
 import ModalSettings from "../Modals/ModalSettings";
 import UsersAPI from "../../../Services/Controllers/Users";
+import chatbotImage from "../../../assets/chatbot.png";
 
 export default function SideBar({ isDrawerOpen, toggleDrawer }) {
   const idUser = UsersAPI.getID();
@@ -90,7 +91,7 @@ export default function SideBar({ isDrawerOpen, toggleDrawer }) {
           }}
         >
           <img
-            src="../chatbot.png"
+            src={chatbotImage}
             alt="Halach IA Logo"
             style={{
               width: 35,
@@ -102,7 +103,6 @@ export default function SideBar({ isDrawerOpen, toggleDrawer }) {
           </Typography>
         </Box>
 
-        {/* List of Options */}
         <List sx={{ padding: "0 8px" }}>
           <ListItem disablePadding>
             <ListItemButton

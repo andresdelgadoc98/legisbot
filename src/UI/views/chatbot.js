@@ -13,7 +13,7 @@ import {
   Header,
 } from "../components";
 import { useNavigate, useLocation } from "react-router-dom";
-import myImage from "./chatbot.png";
+import myImage from "../../assets/chatbot.png";
 import io from "socket.io-client";
 import SideBarMain from "../components/SideBars/SideBarMain";
 
@@ -23,8 +23,11 @@ const socket = io(config.WEB_SOCKET_URL, {
 
 const Chat = () => {
   const idUser = UsersAPI.getID();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
+  //checar n ose a que se refiere xd y tal vez se pueadn juntar creo que s el documento
   const [selectedValue, setSelectedValue] = useState("");
   const [searchType, setsearchType] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -35,46 +38,23 @@ const Chat = () => {
   const [context, setContext] = useState("");
   const [name_file, setname_file] = useState("#");
   const [isBotResponding, setIsBotResponding] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [dataUser, setdataUser] = useState({
-    nombre: "",
-    email: "",
-  });
   const [documentsList, setdocumentsList] = useState([]);
+  //ver si se peuden juntar estas variables y hacer menos
   const [jurisdiccion, setJurisdiccion] = useState("federal");
   const [jurisdiccionSelected, setJurisdicciónSelected] = useState({
     name: "Federal",
     folder: "federal",
   });
   const [shouldScrollToEnd, setShouldScrollToEnd] = useState(true);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [IsDrawerOpenMain, SetIsDrawerOpenMain] = useState();
-  /*
-  const existingToken = localStorage.getItem("fcmToken");
-  if (!existingToken) {
-    requestForToken();
-  } */
-
-  const [isFirstLogin, setIsFirstLogin] = useState(false);
-
-  useEffect(() => {
-    const hasLoggedInBefore = localStorage.getItem("hasLoggedIn");
-    if (!hasLoggedInBefore) {
-      setIsFirstLogin(true);
-      localStorage.setItem("hasLoggedIn", "true");
-    }
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const response2 = await ChatAPI.getChats(idUser);
-        const response3 = await UsersAPI.getInfo(idUser);
 
         if (!response2.error) {
           setSavedChats(response2.data);
-          setdataUser(response3.data);
         }
       } catch (e) {
         console.log({ e });
@@ -194,16 +174,14 @@ const Chat = () => {
       setIsBotResponding(false);
     };
 
-    // Escucha los eventos del socket
     socket.on("response", handleResponse);
     socket.on("response_end", handleResponseEnd);
 
-    // Limpia los listeners al desmontar el componente
     return () => {
       socket.off("response", handleResponse);
       socket.off("response_end", handleResponseEnd);
     };
-  }, [name_file, searchType]); // Dependencia: el efecto se ejecuta cuando `name_file` cambia
+  }, [name_file, searchType]);
 
   const handleSendMessage = async () => {
     if (searchType === "jurisprudencias" && context === null) {
@@ -363,14 +341,6 @@ const Chat = () => {
     }
   };
 
-  const handleOpenModal = () => {
-    setIsProfileModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsProfileModalOpen(false);
-  };
-
   const handleOpenContextModal = () => {
     setIsContextModalOpen(true);
   };
@@ -391,10 +361,6 @@ const Chat = () => {
           name_file={name_file}
           setModalOpen={setModalOpen}
           handleOpenContextModal={handleOpenContextModal}
-          handleOpenModal={handleOpenModal}
-          savedChats={savedChats}
-          selectedChatId={selectedChatId}
-          setShouldScrollToEnd={setShouldScrollToEnd}
           toggleDrawerMain={toggleDrawerMain}
         />
 
@@ -470,7 +436,6 @@ const Chat = () => {
             setCurrentMessage={setCurrentMessage}
             handleSendMessage={handleSendMessage}
             searchType={searchType}
-            name_file={name_file}
             isBotResponding={isBotResponding}
             sx={{ overflow: "hidden" }}
           />
@@ -491,7 +456,6 @@ const Chat = () => {
       <SideBarMain
         toggleDrawer={toggleDrawerMain}
         isDrawerOpen={IsDrawerOpenMain}
-        handleOpenModal={handleOpenModal}
       />
       <ModalContext
         selectedChatId={selectedChatId}
@@ -501,10 +465,8 @@ const Chat = () => {
         messages={messages}
         setMessages={setMessages}
         setSavedChats={setSavedChats}
-        socket={socket}
         context={context}
         setContext={setContext}
-        handleConfirm={handleConfirm}
         searchType={searchType}
         selectedValue={selectedValue}
       />
@@ -517,10 +479,8 @@ const Chat = () => {
         setSelectedType={setsearchType}
         selectedValue={selectedValue}
         setJurisdiccion={setJurisdiccion}
-        jurisdiccion={jurisdiccion}
         jurisdiccionSelected={jurisdiccionSelected}
         setJurisdicciónSelected={setJurisdicciónSelected}
-        setShouldScrollToEnd={setShouldScrollToEnd}
       />
     </div>
   );

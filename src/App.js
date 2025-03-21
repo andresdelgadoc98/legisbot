@@ -1,6 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import ChatBot from "./UI/views/chatbot";
-import Login from "./UI/views/Login";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import {
   ThemeProvider as MuiThemeProvider,
@@ -13,10 +11,9 @@ import {
   ThemeContext,
   ThemeProvider,
 } from "../src/UI/components/Utils/ThemeContext";
+
 import UsersAPI from "./Services/Controllers/Users";
-import Jurisprudencias from "./UI/views/jurisprudencias";
-import Library from "./UI/views/library";
-import Notification from "./Services/Controllers/Notification";
+import { Jurisprudencias, Login, ChatBot, Library } from "./UI/views";
 
 const renewAccessToken = async () => {
   try {
@@ -116,14 +113,14 @@ function App() {
   const themeColors = {
     dark: "#121212",
     light: "#ffffff",
-    pink: "#e91e63", // O usa '#f06292' si prefieres chatUser
+    pink: "#e91e63",
   };
 
   useEffect(() => {
     document
       .querySelector("meta[name='theme-color']")
-      .setAttribute("content", themeColors[theme] || "#121212"); // Fallback a #121212 si theme no está definido
-  }, [theme]); // Dependencia en theme para que se actualice cuando cambie
+      .setAttribute("content", themeColors[theme] || "#121212");
+  }, [theme]);
   return (
     <MuiThemeProvider theme={themes[theme] || darkTheme}>
       <CssBaseline />

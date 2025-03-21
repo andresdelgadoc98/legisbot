@@ -1,6 +1,6 @@
 // /public/worker.js
 const CACHE_NAME = "cache";
-const version = "0.0.13";
+const version = "0.0.14";
 
 // Importar Firebase
 importScripts("https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js");
@@ -63,7 +63,8 @@ messaging.onBackgroundMessage((payload) => {
     body: payload.notification?.body || "Haz clic para ver más detalles.",
     icon: payload.notification?.icon || "/favicon.ico",
     data: {
-      url: payload.data?.url || "https://localhost:3000/jurisprudencias",
+      url:
+        payload.data?.url || "https://www.saturnodelgado.com/jurisprudencias",
     },
   };
 
@@ -76,7 +77,8 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   const urlToOpen =
-    event.notification.data?.url || "https://localhost:3000/jurisprudencias";
+    event.notification.data?.url ||
+    "https://www.saturnodelgado.com/jurisprudencias";
   console.log("Intentando abrir:", urlToOpen);
 
   event.waitUntil(

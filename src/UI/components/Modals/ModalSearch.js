@@ -23,7 +23,6 @@ const ModalSearch = ({
   setJurisdiccion,
   setJurisdicciónSelected,
   jurisdiccionSelected,
-  setShouldScrollToEnd,
 }) => {
   const [selectedOption, setSelectedOption] = useState();
   const [JurisdiccionList, setJurisdicciónList] = useState([

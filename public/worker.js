@@ -1,5 +1,5 @@
 const CACHE_NAME = "cache";
-const version = "0.0.2";
+const version = "0.0.3";
 
 // Instalación del service worker
 self.addEventListener("install", (event) => {
@@ -28,7 +28,7 @@ self.addEventListener("push", (event) => {
     body: data.notification?.body || "Haz clic para ver más detalles.",
     icon: data.notification?.icon || "/path/to/icon.png",
     data: {
-      url: data.data?.url || "https://www.example2.com", // URL específica desde FCM
+      url: data.data?.url || "https://www.saturnodelgado.com/",
     },
   };
 
@@ -39,7 +39,8 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Clic en notificación detectado:", event.notification);
   event.notification.close();
 
-  const urlToOpen = event.notification.data?.url || "https://localhost:5002/";
+  const urlToOpen =
+    event.notification.data?.url || "https://www.saturnodelgado.com/";
   console.log("URL objetivo:", urlToOpen);
 
   event.waitUntil(
