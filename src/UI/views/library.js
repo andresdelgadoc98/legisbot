@@ -205,6 +205,9 @@ const DocumentViewer = () => {
                       plugins={[defaultLayoutPluginInstance]}
                     />
                   </Worker>
+                  {console.log(
+                    `${config.URL_DOCUMENTS}${selectedDocument.jurisdiccion}/${selectedDocument.folder}.pdf`
+                  )}
                 </Box>
               </>
             ) : (
