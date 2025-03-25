@@ -81,9 +81,8 @@ function JurisprudenceFinder() {
   }, [selectedDate, navigate]); // Añadí navigate como dependencia
 
   const handleCardClick = (juris) => {
-    alert(
-      `Clic en: ${juris.title}\nRegistro: ${juris.id}\nDetalles: ${juris.source}`
-    );
+    const url = "https://sjfsemanal.scjn.gob.mx/detalle/tesis/" + juris.id;
+    window.open(url, "_blank"); // Abre en una nueva pestaña
   };
 
   const toggleDrawerMain = (open) => (event) => {
@@ -105,7 +104,7 @@ function JurisprudenceFinder() {
       />
 
       <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Typography variant="h4" gutterBottom align="center">
+        <Typography variant="h5" gutterBottom align="center">
           Buscador de Jurisprudencias
         </Typography>
 
