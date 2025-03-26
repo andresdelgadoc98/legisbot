@@ -1,15 +1,30 @@
 import React from "react";
 import BalanceIcon from "@mui/icons-material/Balance";
 import SearchIcon from "@mui/icons-material/Search";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import GavelIcon from "@mui/icons-material/Gavel";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, FormControl, IconButton, Button } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";
+
+const getSearchIcon = (searchType) => {
+  switch (searchType) {
+    case "documentos":
+      return <LibraryBooksIcon />;
+    case "jurisprudencias":
+      return <GavelIcon />;
+    default:
+      return <SearchIcon />;
+  }
+};
 
 export default function Header({
   toggleDrawer,
   setModalOpen,
   handleOpenContextModal,
   toggleDrawerMain,
+  searchType,
 }) {
   return (
     <Box
@@ -51,7 +66,7 @@ export default function Header({
 
           <FormControl variant="outlined" sx={{ ml: 1 }}>
             <Button variant="contained" onClick={() => setModalOpen(true)}>
-              <SearchIcon />
+              {getSearchIcon(searchType)}
             </Button>
           </FormControl>
           <FormControl variant="outlined" sx={{ ml: 1 }}>

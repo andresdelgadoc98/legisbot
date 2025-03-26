@@ -27,7 +27,6 @@ const Chat = () => {
   const location = useLocation();
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
-  //checar n ose a que se refiere xd y tal vez se pueadn juntar creo que s el documento
   const [selectedValue, setSelectedValue] = useState("");
   const [searchType, setsearchType] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -39,7 +38,6 @@ const Chat = () => {
   const [name_file, setname_file] = useState("#");
   const [isBotResponding, setIsBotResponding] = useState(false);
   const [documentsList, setdocumentsList] = useState([]);
-  //ver si se peuden juntar estas variables y hacer menos
   const [jurisdiccion, setJurisdiccion] = useState("federal");
   const [jurisdiccionSelected, setJurisdicciónSelected] = useState({
     name: "Federal",
@@ -104,11 +102,10 @@ const Chat = () => {
       try {
         const searchParams = new URLSearchParams(location.search);
         const chatIdFromUrl = searchParams.get("chatId");
-
-        //if (chatIdFromUrl && documentsList.length > 0) {
         if (chatIdFromUrl) {
           const response = await ChatAPI.getMessages(idUser, chatIdFromUrl);
           const folder = response.data.preferencia.document;
+
           setsearchType(response.data.preferencia.searchType);
           setJurisdicciónSelected(
             response.data.preferencia.jurisdiccionSelected
@@ -155,7 +152,6 @@ const Chat = () => {
     };
 
     const handleResponseEnd = () => {
-      console.log({ searchType });
       if (searchType === "documentos") {
         setMessages((prev) => {
           const lastMessage = prev[prev.length - 1];
