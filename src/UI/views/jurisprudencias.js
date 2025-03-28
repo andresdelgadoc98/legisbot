@@ -103,7 +103,7 @@ function JurisprudenceFinder() {
         toggleDrawer={toggleDrawerMain}
       />
 
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Container maxWidth="md">
         <Typography variant="h5" gutterBottom align="center">
           Buscador de Jurisprudencias
         </Typography>
