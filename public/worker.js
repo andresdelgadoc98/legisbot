@@ -1,5 +1,5 @@
 const CACHE_NAME = "cache";
-const version = "0.0.3";
+const version = "0.0.4";
 
 // Instalación del service worker
 self.addEventListener("install", (event) => {
@@ -15,18 +15,17 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Manejar mensajes push de FCM
 self.addEventListener("push", (event) => {
   console.log("manear mensajes push de FCM");
   let data = {};
   if (event.data) {
-    data = event.data.json(); // Los datos enviados desde FCM
+    data = event.data.json();
   }
 
   const title = data.notification?.title || "¡Notificación nueva!";
   const options = {
     body: data.notification?.body || "Haz clic para ver más detalles.",
-    icon: data.notification?.icon || "/path/to/icon.png",
+    icon: data.notification?.icon || "chatbot.png",
     data: {
       url: data.data?.url || "https://www.saturnodelgado.com/",
     },
