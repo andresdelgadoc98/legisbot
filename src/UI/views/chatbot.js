@@ -111,30 +111,25 @@ const Chat = () => {
             response.data.preferencia.jurisdiccionSelected
           );
           setSelectedValue(response.data.preferencia.document);
+          setSelectedChatId(chatIdFromUrl);
+          setMessages(response.data.contenido);
+
           const response2 = await DocumentApi.getDocuments(
             response.data.preferencia.jurisdiccionSelected.folder
           );
           const nameFile =
             response2.data.find((doc) => doc.folder === folder)?.file || null;
+          console.log({ nameFile });
           setname_file(nameFile);
           setdocumentsList(response2.data);
-
-          if (response.data) {
-            setSelectedChatId(chatIdFromUrl);
-            setMessages(response.data.contenido);
-            setShouldScrollToEnd(true);
-          } else {
-          }
-        } else {
+          setShouldScrollToEnd(true);
         }
       } catch (e) {
         console.log({ e });
-        //navigate("/");
       }
     }
     fetchData();
   }, []);
-  //  }, [documentsList]);
 
   useEffect(() => {
     const handleResponse = (data) => {
@@ -288,6 +283,7 @@ const Chat = () => {
       response2.data.find((doc) => doc.folder === folder)?.file || null;
     setname_file(nameFile);
     setShouldScrollToEnd(true);
+
     const searchParams = new URLSearchParams();
     searchParams.set("chatId", chatId);
     navigate({ search: searchParams.toString() });
